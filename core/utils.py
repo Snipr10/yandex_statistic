@@ -103,7 +103,6 @@ def save_yandex_data(json_data):
     # now_time = datetime.now(timezone.utc)
     now_time = update_time_timezone(datetime.datetime.now())
 
-    seconds_since_epoch = int(now_time.timestamp())
     for story in json_data['news']['storyList']:
         yandex_story.append(
             YandexStatistic(
