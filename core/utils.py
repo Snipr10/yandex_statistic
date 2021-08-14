@@ -107,7 +107,7 @@ def save_yandex_data(json_data):
     for story in json_data['news']['storyList']:
         yandex_story.append(
             YandexStatistic(
-                id=str(story['id']) + str(seconds_since_epoch),
+                id=str(story['id']),
                 title=story['title'],
                 url=story['url'],
                 lastHourDocs=story['lastHourDocs'],
@@ -121,4 +121,5 @@ def save_yandex_data(json_data):
                 parsing_date=now_time
             )
         )
+    YandexStatistic.objects.all().delete()
     YandexStatistic.objects.bulk_create(yandex_story, batch_size=200)
