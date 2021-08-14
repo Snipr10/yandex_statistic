@@ -16,4 +16,4 @@ class YandexStatistic(models.Model):
     parsing_date = models.DateTimeField()
 
     class Meta:
-        db_table = 'prsr_parser_tg_proxy'
+        db_table = 'prsr_parser_yandex_static'
