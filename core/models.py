@@ -2,7 +2,7 @@ from django.db import models
 
 
 class YandexStatistic(models.Model):
-    id = models.CharField(primary_key=True, max_length=256)
+    # id = models.CharField(primary_key=True, max_length=256)
     title = models.CharField(max_length=256)
     url = models.CharField(max_length=256)
     lastHourDocs = models.IntegerField()
@@ -14,6 +14,7 @@ class YandexStatistic(models.Model):
     generalInterest = models.IntegerField()
     weight = models.IntegerField()
     parsing_date = models.DateTimeField()
+    yandex_id = models.CharField(max_length=256)
 
     class Meta:
         db_table = 'prsr_parser_yandex_static'

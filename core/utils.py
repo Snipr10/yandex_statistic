@@ -106,7 +106,7 @@ def save_yandex_data(json_data):
     for story in json_data['news']['storyList']:
         yandex_story.append(
             YandexStatistic(
-                id=str(story['id']),
+                yandex_id=str(story['id']),
                 title=story['title'],
                 url=story['url'],
                 lastHourDocs=story['lastHourDocs'],
