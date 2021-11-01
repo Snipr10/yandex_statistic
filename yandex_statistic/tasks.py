@@ -1,5 +1,5 @@
 import logging
-from yandex_statistic.celery.celery import app
+from core.celery import app
 from core.utils import get_yandex_data
 
 logger = logging.getLogger(__file__)
@@ -7,4 +7,5 @@ logger = logging.getLogger(__file__)
 
 @app.task
 def start_task_new_update():
+    print("start")
     get_yandex_data()
