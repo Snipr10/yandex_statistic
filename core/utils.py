@@ -139,6 +139,6 @@ def save_yandex_data(json_data):
                 parsing_date=now_time
             )
         )
+    YandexStatistic.objects.all().delete()
     YandexStatistic.objects.bulk_create(yandex_story, batch_size=200)
-    YandexStatistic0.objects.all().delete()
     YandexStatistic0.objects.bulk_create(yandex_story_o, batch_size=200)
