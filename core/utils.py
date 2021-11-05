@@ -6,7 +6,7 @@ import requests
 from bs4 import BeautifulSoup
 
 # from core.models import YandexStatistic
-from core.models import YandexStatistic
+from core.models import YandexStatistic, YandexStatistic0
 
 DATA_URL = "https://yandex.ru/news/top/region/Saint_Petersburg"
 DATA_TEXT = "window.Ya=window.Ya||{};window.Ya.Neo=window.Ya.Neo||{};window.Ya.Neo.dataSource="
@@ -120,4 +120,25 @@ def save_yandex_data(json_data):
                 parsing_date=now_time
             )
         )
+    yandex_story_o = []
+
+    for story in json_data['news']['storyList']:
+        yandex_story_o.append(
+            YandexStatistic0(
+                yandex_id=str(story['id']),
+                title=story['title'],
+                url=story['url'],
+                lastHourDocs=story['lastHourDocs'],
+                storyDocs=story['storyDocs'],
+                themeStories=story['themeStories'],
+                themeDocs=story['themeDocs'],
+                fullWatches=story['fullWatches'],
+                regionalInterest=story['stat']['regionalInterest'],
+                generalInterest=story['stat']['generalInterest'],
+                weight=story['stat']['weight'],
+                parsing_date=now_time
+            )
+        )
     YandexStatistic.objects.bulk_create(yandex_story, batch_size=200)
+    YandexStatistic0.objects.all().delete()
+    YandexStatistic0.objects.bulk_create(yandex_story_o, batch_size=200)
