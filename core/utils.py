@@ -228,6 +228,15 @@ def save_yandex_data(json_data, res):
     YandexStatistic.objects.bulk_create(yandex_story, batch_size=200)
     YandexStatistic0.objects.bulk_create(yandex_story_o, batch_size=200)
 
+    try:
+        Post.objects.bulk_update(posts, ['updated', ], batch_size=200)
+    except Exception as e:
+        print(e)
+    try:
+        PostContentGlobal.objects.bulk_update(posts_content, ['content', ], batch_size=200)
+    except Exception as e:
+        print(e)
+
 
 def get_sphinx_id(url):
     m = hashlib.md5()
