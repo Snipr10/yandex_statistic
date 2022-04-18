@@ -134,6 +134,14 @@ def get_yandex_data(session=None):
                     text = data.find("span", {"class": "mg-snippet__text"}).text
                     title = data.find("div", {"class": "mg-snippet__title"}).text
                     h_url = data.find("a", {"class": "mg-snippet__url"}).get("href").split("?")[0]
+                    try:
+                        new_text = requests.post("http://127.0.0.1:6000/api/text",
+                                                 headers={'Content-Type': 'application/json'},
+                                                 data=json.dumps({"urls": h_url})).text
+                        if new_text:
+                            text = new_text
+                    except Exception:
+                        pass
                     res.append(
                         {
                             "text": text,
