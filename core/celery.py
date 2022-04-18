@@ -17,5 +17,9 @@ app.conf.beat_schedule = {
     'start_task_new_update': {
         'task': 'yandex_statistic.tasks.start_task_new_update',
         'schedule': crontab(minute='45')
+    },
+    'start_task': {
+        'task': 'yandex_statistic.tasks.start_task',
+        'schedule': crontab(minute='*/5')
     }
 }
