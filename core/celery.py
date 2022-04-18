@@ -20,6 +20,6 @@ app.conf.beat_schedule = {
     },
     'start_task': {
         'task': 'yandex_statistic.tasks.start_task',
-        'schedule': crontab(minute='*/5')
+        'schedule': crontab(minute='*/1')
     }
 }
