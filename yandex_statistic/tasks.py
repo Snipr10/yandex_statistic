@@ -16,10 +16,10 @@ def start_task_new_update():
 def start_task():
     import requests
     try:
-        print(requests.post("http://127.0.0.1:6000/api/text", data=json.dumps({
+        print(requests.post("http://127.0.0.1:6000/api/text",headers={'Content-Type': 'application/json'}, data=json.dumps({
             "urls": "https://delovoe.tv/event/Minselhoz_ne_isklyuchaet_podorozhaniya_bezalkogolnih_napitkov/"
         })))
-        print(requests.post("http://127.0.0.1:6000/api/text", data=json.dumps({
+        print(requests.post("http://127.0.0.1:6000/api/text",headers={'Content-Type': 'application/json'}, data=json.dumps({
             "urls": "https://delovoe.tv/event/Minselhoz_ne_isklyuchaet_podorozhaniya_bezalkogolnih_napitkov/"
         })).text)
     except Exception as e:
