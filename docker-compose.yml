@@ -4,19 +4,18 @@ services:
 
   redis:
     image: redis:alpine
-
+    networks:
+      - main
 
   celery:
     build: ./
     command: celery -A core worker --loglevel=INFO --concurrency=10
-    networks:
-      - main
+
     depends_on:
       - redis
   celery-beat:
     build: ./
-    networks:
-      - main
+
     command: celery -A core beat -l info
     depends_on:
       - redis
