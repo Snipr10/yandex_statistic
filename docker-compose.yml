@@ -11,7 +11,6 @@ services:
       - redis
   celery-beat:
     build: ./
-    network_mode: "host"
     command: celery -A core beat -l info
     depends_on:
       - redis
