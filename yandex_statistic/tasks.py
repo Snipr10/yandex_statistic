@@ -17,10 +17,10 @@ def start_task():
     import requests
     try:
         print(requests.post("http://127.0.0.1:6000/api/text", data=json.dumps({
-            "urls": "https://spb.dixinews.ru/news/transport/v-peterburge-startuet-rechnaya-navigatsiya/"
+            "urls": "https://delovoe.tv/event/Minselhoz_ne_isklyuchaet_podorozhaniya_bezalkogolnih_napitkov/"
         })))
         print(requests.post("http://127.0.0.1:6000/api/text", data=json.dumps({
-            "urls": "https://spb.dixinews.ru/news/transport/v-peterburge-startuet-rechnaya-navigatsiya/"
+            "urls": "https://delovoe.tv/event/Minselhoz_ne_isklyuchaet_podorozhaniya_bezalkogolnih_napitkov/"
         })).text)
     except Exception as e:
         print(e)
