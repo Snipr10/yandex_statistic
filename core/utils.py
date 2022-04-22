@@ -3,8 +3,10 @@ import hashlib
 import json
 import time
 
+import pika as pika
 import requests
 from bs4 import BeautifulSoup
+from dateutil.parser import parse
 
 # from core.models import YandexStatistic
 from core.models import YandexStatistic, YandexStatistic0, Post, PostContentGlobal
@@ -129,11 +131,26 @@ def get_yandex_data(session=None):
             url_full = url.replace("/story/", "/instory/")
             response, session = get_response_news(session, url_full)
 
-            for data in BeautifulSoup(response).find_all("div", {"class": "mg-snippet__content"}):
+            script_ = None
+            for script in BeautifulSoup(response).find_all("script"):
+                if "window.Ya.Neo.dataSource" in str(script):
+                    script_ = json.loads(script.string[:-1].replace("window.Ya.Neo.dataSource=", ""))
+                    break
+            news = []
+            for new in script_['news']['instoryPage']:
+                if new.get("docs"):
+                    news.extend(new.get("docs"))
+            for new in news:
                 try:
-                    text = data.find("span", {"class": "mg-snippet__text"}).text
-                    title = data.find("div", {"class": "mg-snippet__title"}).text
-                    h_url = data.find("a", {"class": "mg-snippet__url"}).get("href").split("?")[0]
+                    text = new['text'][-1]["text"]
+                    title = new['title'][0]['text']
+                    try:
+                        date_ = parse(new['time'])
+                    except Exception as e:
+                        date_ = datetime.datetime.now()
+                    author_name = new['sourceName']
+                    author_icon = new['image']
+                    h_url = new['url'].split("?")[0]
                     try:
                         new_text = requests.post("http://127.0.0.1:6000/api/text",
                                                  headers={'Content-Type': 'application/json'},
@@ -144,17 +161,48 @@ def get_yandex_data(session=None):
                         pass
                     res.append(
                         {
+                            "date_": date_,
                             "text": text,
                             "title": title,
                             "h_url": h_url,
-                            "group_id": hashlib.md5(url.encode()).hexdigest()
+                            "group_id": hashlib.md5(url.encode()).hexdigest(),
+                            "author_name": author_name,
+                            "author_icon": author_icon
                         }
                     )
                 except Exception as e:
                     print(e)
-            print(response)
-
         save_yandex_data(json_data, res)
+        # for data in BeautifulSoup(response).find_all("div", {"class": "mg-snippet mg-snippet_flat news-search-story__snippet"}):
+        #     try:
+        #         text = data.find("span", {"class": "mg-snippet__text"}).text
+        #         title = data.find("div", {"class": "mg-snippet__title"}).text
+        #         try:
+        #             date_ = parse(data.find("span", {"class": "mg-snippet-source-info__time"}).text)
+        #         except Exception as e:
+        #             date_ = datetime.datetime.now()
+        #         author_name = data.find("span", {"class": "mg-snippet-source-info__agency-name"}).text
+        #         author_icon = data.find("img", {"class": "neo-image neo-image_loaded"}).text
+        #         h_url = data.find("a", {"class": "mg-snippet__url"}).get("href").split("?")[0]
+        #         try:
+        #             new_text = requests.post("http://127.0.0.1:6000/api/text",
+        #                                      headers={'Content-Type': 'application/json'},
+        #                                      data=json.dumps({"urls": h_url})).text
+        #             if new_text:
+        #                 text = new_text
+        #         except Exception:
+        #             pass
+        #         res.append(
+        #             {
+        #                 "date_": date_,
+        #                 "text": text,
+        #                 "title": title,
+        #                 "h_url": h_url,
+        #                 "group_id": hashlib.md5(url.encode()).hexdigest()
+        #             }
+        #         )
+        #     except Exception as e:
+        #         print(e)
 
 
 def update_time_timezone(my_time):
@@ -212,26 +260,51 @@ def save_yandex_data(json_data, res):
     posts = []
     posts_content = []
 
+    parameters = pika.URLParameters("amqp://full_posts_parser:nJ6A07XT5PgY@192.168.5.46:5672/smi_tasks")
+    connection = pika.BlockingConnection(parameters=parameters)
+    channel = connection.channel()
     for r in res:
-        posts.append(
-            Post(
-                cache_id=get_sphinx_id_16(r['h_url']),
-                owner_sphinx_id=get_sphinx_id("http://" + r['h_url'].split("/")[2]),
-                created=datetime.datetime.now(),
-                group_id=r['group_id'])
-        )
-        posts_content.append(
-            PostContentGlobal(
-                cache_id=get_sphinx_id_16(r['h_url']),
-                content=r['text'],
-                title=r['title'],
-                link=r['h_url'])
-        )
-    try:
-        Post.objects.bulk_create(posts, batch_size=200, ignore_conflicts=True)
-        PostContentGlobal.objects.bulk_create(posts_content, batch_size=200, ignore_conflicts=True)
-    except Exception as e:
-        print(e)
+        try:
+            rmq_json_data = {
+                "title": r.get('title', ''),
+                "content": r.get("text"),
+                "created": r.get('date_').strftime("%Y-%m-%d %H:%M:%S"),
+                "url": r.get('h_url'),
+                "author_name": r.get("author_name"),
+                "author_icon": r.get("author_icon"),
+                "group_id": r.get("group_id"),
+                "images": [],
+                "keyword_id": 10000005,
+            }
+
+            channel.basic_publish(exchange='',
+                                  routing_key='smi_posts',
+                                  body=json.dumps(rmq_json_data))
+            print("SEND RMQ")
+
+        except Exception as e:
+            print("can not send RMQ " + str(e))
+
+    # for r in res:
+    #     posts.append(
+    #         Post(
+    #             cache_id=get_sphinx_id_16(r['h_url']),
+    #             owner_sphinx_id=get_sphinx_id("http://" + r['h_url'].split("/")[2]),
+    #             created=datetime.datetime.now(),
+    #             group_id=r['group_id'])
+    #     )
+    #     posts_content.append(
+    #         PostContentGlobal(
+    #             cache_id=get_sphinx_id_16(r['h_url']),
+    #             content=r['text'],
+    #             title=r['title'],
+    #             link=r['h_url'])
+    #     )
+    # try:
+    #     Post.objects.bulk_create(posts, batch_size=200, ignore_conflicts=True)
+    #     PostContentGlobal.objects.bulk_create(posts_content, batch_size=200, ignore_conflicts=True)
+    # except Exception as e:
+    #     print(e)
     YandexStatistic.objects.all().delete()
     YandexStatistic.objects.bulk_create(yandex_story, batch_size=200)
     YandexStatistic0.objects.bulk_create(yandex_story_o, batch_size=200)
