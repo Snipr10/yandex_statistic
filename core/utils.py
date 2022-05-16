@@ -7,6 +7,7 @@ import pika as pika
 import requests
 from bs4 import BeautifulSoup
 from dateutil.parser import parse
+import django.db
 
 # from core.models import YandexStatistic
 from core.models import YandexStatistic, YandexStatistic0, Post, PostContentGlobal
@@ -259,32 +260,33 @@ def save_yandex_data(json_data, res):
         )
     posts = []
     posts_content = []
+    try:
+        parameters = pika.URLParameters("amqp://full_posts_parser:nJ6A07XT5PgY@192.168.5.46:5672/smi_tasks")
+        connection = pika.BlockingConnection(parameters=parameters)
+        channel = connection.channel()
+        for r in res:
+            try:
+                rmq_json_data = {
+                    "title": r.get('title', ''),
+                    "content": r.get("text"),
+                    "created": r.get('date_').strftime("%Y-%m-%d %H:%M:%S"),
+                    "url": r.get('h_url'),
+                    "author_name": r.get("author_name"),
+                    "author_icon": r.get("author_icon"),
+                    "group_id": r.get("group_id"),
+                    "images": [],
+                    "keyword_id": 10000005,
+                }
 
-    parameters = pika.URLParameters("amqp://full_posts_parser:nJ6A07XT5PgY@192.168.5.46:5672/smi_tasks")
-    connection = pika.BlockingConnection(parameters=parameters)
-    channel = connection.channel()
-    for r in res:
-        try:
-            rmq_json_data = {
-                "title": r.get('title', ''),
-                "content": r.get("text"),
-                "created": r.get('date_').strftime("%Y-%m-%d %H:%M:%S"),
-                "url": r.get('h_url'),
-                "author_name": r.get("author_name"),
-                "author_icon": r.get("author_icon"),
-                "group_id": r.get("group_id"),
-                "images": [],
-                "keyword_id": 10000005,
-            }
+                channel.basic_publish(exchange='',
+                                      routing_key='smi_posts',
+                                      body=json.dumps(rmq_json_data))
+                print("SEND RMQ")
 
-            channel.basic_publish(exchange='',
-                                  routing_key='smi_posts',
-                                  body=json.dumps(rmq_json_data))
-            print("SEND RMQ")
-
-        except Exception as e:
-            print("can not send RMQ " + str(e))
-
+            except Exception as e:
+                print("can not send RMQ " + str(e))
+    except Exception as e:
+        print(e)
     # for r in res:
     #     posts.append(
     #         Post(
@@ -305,6 +307,8 @@ def save_yandex_data(json_data, res):
     #     PostContentGlobal.objects.bulk_create(posts_content, batch_size=200, ignore_conflicts=True)
     # except Exception as e:
     #     print(e)
+    django.db.close_old_connections()
+
     YandexStatistic.objects.all().delete()
     YandexStatistic.objects.bulk_create(yandex_story, batch_size=200)
     YandexStatistic0.objects.bulk_create(yandex_story_o, batch_size=200)
