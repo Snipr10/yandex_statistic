@@ -128,7 +128,11 @@ def get_yandex_data(session=None):
         res = []
         for story in json_data['news']['storyList']:
             urls.append(story['url'].split("?")[0])
+        print(f"URLS SIZE {len(urls)}")
+        i = 0
         for url in urls:
+            i += 1
+            print(f"i {i}")
             url_full = url.replace("/story/", "/instory/")
             response, session = get_response_news(session, url_full)
 
@@ -141,7 +145,11 @@ def get_yandex_data(session=None):
             for new in script_['news']['instoryPage']:
                 if new.get("docs"):
                     news.extend(new.get("docs"))
+            print(f"news {len(news)}")
+            k = 0
             for new in news:
+                k += 1
+                print(f"k {k}")
                 try:
                     text = new['text'][-1]["text"]
                     title = new['title'][0]['text']
