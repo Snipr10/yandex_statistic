@@ -66,6 +66,8 @@ if __name__ == '__main__':
     from core.utils import get_yandex_data
     while True:
         try:
+            print("start")
+
             get_yandex_data()
             time.sleep(60 * 10)
         except Exception as e:
