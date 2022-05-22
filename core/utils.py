@@ -310,12 +310,13 @@ def save_yandex_data(json_data, res):
                 title=r['title'],
                 link=r['h_url'])
         )
+    django.db.close_old_connections()
+
     try:
         Post.objects.bulk_create(posts, batch_size=200, ignore_conflicts=True)
         PostContentGlobal.objects.bulk_create(posts_content, batch_size=200, ignore_conflicts=True)
     except Exception as e:
         print(e)
-    django.db.close_old_connections()
 
     YandexStatistic.objects.all().delete()
     YandexStatistic.objects.bulk_create(yandex_story, batch_size=200)
