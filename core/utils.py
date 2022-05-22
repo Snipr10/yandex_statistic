@@ -123,13 +123,13 @@ def get_yandex_data(session=None):
         if DATA_TEXT in str(content):
             json_data = json.loads(str(content.contents[0]).replace(DATA_TEXT, "").strip()[:-1])
             break
+    i = 0
     if json_data is not None:
         urls = []
         res = []
         for story in json_data['news']['storyList']:
             urls.append(story['url'].split("?")[0])
         print(f"URLS SIZE {len(urls)}")
-        i = 0
         for url in urls:
             i += 1
             print(f"i {i}")
@@ -181,6 +181,7 @@ def get_yandex_data(session=None):
                     )
                 except Exception as e:
                     print(e)
+        print("save")
         save_yandex_data(json_data, res)
         # for data in BeautifulSoup(response).find_all("div", {"class": "mg-snippet mg-snippet_flat news-search-story__snippet"}):
         #     try:
