@@ -66,11 +66,11 @@ if __name__ == '__main__':
     from core.utils import get_yandex_data
     while True:
         try:
-            print("start")
-
+            print("start while true")
             get_yandex_data()
+            print("stop")
         except Exception as e:
-            print(e)
+            print(f"Exception {e}")
     # loop = asyncio.new_event_loop()
     # login_result = loop.run_until_complete(asyncio.wait_for(get_yandex_data(), 6000))
 

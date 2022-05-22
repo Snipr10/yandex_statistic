@@ -167,7 +167,7 @@ def get_yandex_data(session=None):
                         if new_text:
                             text = new_text
                     except Exception:
-                        pass
+                        print("text")
                     res.append(
                         {
                             "date_": date_,
