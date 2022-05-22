@@ -296,6 +296,7 @@ def save_yandex_data(json_data, res):
     except Exception as e:
         print(e)
     for r in res:
+        print(r['group_id'])
         posts.append(
             Post(
                 cache_id=get_sphinx_id_16(r['h_url']),
