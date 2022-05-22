@@ -90,7 +90,7 @@ def get_response(new_session):
 
 def get_response_news(new_session, url):
     new_response = None
-    while True:
+    while True and new_response is None:
         headers = {
             'authority': 'yandex.ru',
             'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
@@ -114,9 +114,7 @@ def get_response_news(new_session, url):
         if "captcha" in new_response:
             new_session = get_proxy()
             # return get_response_news(new_session, url)
-        if new_response:
-            break
-        return new_response, new_session
+    return new_response, new_session
 
 
 def get_yandex_data(session=None):
