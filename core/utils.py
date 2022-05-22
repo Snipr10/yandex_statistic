@@ -110,14 +110,15 @@ def get_response_news(new_session, url):
             try:
                 new_response = new_session.get(url, headers=headers).text
             except Exception as e:
-                print(f"get_response_news {e}")
+                print(new_session.cookies)
+                print(f"get_response_news1 {e}")
                 # return get_response_news(get_proxy(), url)
             if new_response is not None and "captcha" in new_response:
                 new_response = None
                 new_session = get_proxy()
                 # return get_response_news(new_session, url)
         except Exception as e:
-            print(f"get_response_news {e}")
+            print(f"get_response_news2 {e}")
             new_response = None
     return new_response, new_session
 
