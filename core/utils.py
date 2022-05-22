@@ -112,6 +112,7 @@ def get_response_news(new_session, url):
             print(f"get_response_news {e}")
             # return get_response_news(get_proxy(), url)
         if "captcha" in new_response:
+            new_response = None
             new_session = get_proxy()
             # return get_response_news(new_session, url)
     return new_response, new_session
