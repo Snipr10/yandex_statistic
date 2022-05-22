@@ -110,6 +110,7 @@ def get_response_news(new_session, url):
             try:
                 new_response = new_session.get(url, headers=headers, timeout=15).text
             except Exception as e:
+                print(url)
                 print(new_session.cookies)
                 print(f"get_response_news1 {e}")
                 # return get_response_news(get_proxy(), url)
