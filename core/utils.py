@@ -111,7 +111,7 @@ def get_response_news(new_session, url):
         except Exception as e:
             print(f"get_response_news {e}")
             # return get_response_news(get_proxy(), url)
-        if "captcha" in new_response:
+        if new_response is not None and "captcha" in new_response:
             new_response = None
             new_session = get_proxy()
             # return get_response_news(new_session, url)
