@@ -154,7 +154,7 @@ def get_yandex_data(session=None):
                     script_ = json.loads(script.string[:-1].replace("window.Ya.Neo.dataSource=", ""))
                     break
             news = []
-            for new in script_['news']['instoryPage']:
+            for new in script_.get('news',{}).get('instoryPage',[]):
                 if new.get("docs"):
                     news.extend(new.get("docs"))
             print(f"news {len(news)}")
@@ -192,7 +192,7 @@ def get_yandex_data(session=None):
                         }
                     )
                 except Exception as e:
-                    print(e)
+                    print(f"newsE {e}")
         print("save")
         save_yandex_data(json_data, res)
         # for data in BeautifulSoup(response).find_all("div", {"class": "mg-snippet mg-snippet_flat news-search-story__snippet"}):
