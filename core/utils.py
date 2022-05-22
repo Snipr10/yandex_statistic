@@ -48,7 +48,7 @@ def get_proxy():
         except Exception:
             pass
         if len(PROXIES) == 0:
-            time.sleep(60)
+            time.sleep(2)
             return get_proxy()
     proxy = PROXIES.pop()
     session = generate_proxy_session(proxy.get("host"), proxy.get("port"), proxy.get("type"))
