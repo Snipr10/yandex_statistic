@@ -69,7 +69,6 @@ if __name__ == '__main__':
             print("start")
 
             get_yandex_data()
-            time.sleep(60 * 10)
         except Exception as e:
             print(e)
     # loop = asyncio.new_event_loop()

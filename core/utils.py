@@ -295,26 +295,26 @@ def save_yandex_data(json_data, res):
                 print("can not send RMQ " + str(e))
     except Exception as e:
         print(e)
-    # for r in res:
-    #     posts.append(
-    #         Post(
-    #             cache_id=get_sphinx_id_16(r['h_url']),
-    #             owner_sphinx_id=get_sphinx_id("http://" + r['h_url'].split("/")[2]),
-    #             created=datetime.datetime.now(),
-    #             group_id=r['group_id'])
-    #     )
-    #     posts_content.append(
-    #         PostContentGlobal(
-    #             cache_id=get_sphinx_id_16(r['h_url']),
-    #             content=r['text'],
-    #             title=r['title'],
-    #             link=r['h_url'])
-    #     )
-    # try:
-    #     Post.objects.bulk_create(posts, batch_size=200, ignore_conflicts=True)
-    #     PostContentGlobal.objects.bulk_create(posts_content, batch_size=200, ignore_conflicts=True)
-    # except Exception as e:
-    #     print(e)
+    for r in res:
+        posts.append(
+            Post(
+                cache_id=get_sphinx_id_16(r['h_url']),
+                owner_sphinx_id=get_sphinx_id("http://" + r['h_url'].split("/")[2]),
+                created=datetime.datetime.now(),
+                group_id=r['group_id'])
+        )
+        posts_content.append(
+            PostContentGlobal(
+                cache_id=get_sphinx_id_16(r['h_url']),
+                content=r['text'],
+                title=r['title'],
+                link=r['h_url'])
+        )
+    try:
+        Post.objects.bulk_create(posts, batch_size=200, ignore_conflicts=True)
+        PostContentGlobal.objects.bulk_create(posts_content, batch_size=200, ignore_conflicts=True)
+    except Exception as e:
+        print(e)
     django.db.close_old_connections()
 
     YandexStatistic.objects.all().delete()
@@ -325,10 +325,10 @@ def save_yandex_data(json_data, res):
         Post.objects.bulk_update(posts, ['updated', ], batch_size=200)
     except Exception as e:
         print(e)
-    try:
-        PostContentGlobal.objects.bulk_update(posts_content, ['content', ], batch_size=200)
-    except Exception as e:
-        print(e)
+    # try:
+    #     PostContentGlobal.objects.bulk_update(posts_content, ['content', ], batch_size=200)
+    # except Exception as e:
+    #     print(e)
 
 
 def get_sphinx_id(url):
