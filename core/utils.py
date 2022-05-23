@@ -324,10 +324,10 @@ def save_yandex_data(json_data, res):
         print(e)
     result_group = {}
     for r in res:
-        if r['group_id'] in result_group:
-            result_group['group_id'] = result_group['group_id'] + 1
+        if  result_group.get(r['group_id']) is not None:
+            result_group[r['group_id']] = result_group.get(r['group_id']) + 1
         else:
-            result_group['group_id'] = 1
+            result_group[r['group_id']] = 1
 
         posts.append(
             Post(
