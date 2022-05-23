@@ -146,6 +146,7 @@ def get_yandex_data(session=None):
             i += 1
             print(f"i {i}")
             url_full = url.replace("/story/", "/instory/")
+            url_full = url_full.replace(urls[-1].split("/")[3], "news")
             response, session = get_response_news(session, url_full)
 
             script_ = None
@@ -154,9 +155,22 @@ def get_yandex_data(session=None):
                     script_ = json.loads(script.string[:-1].replace("window.Ya.Neo.dataSource=", ""))
                     break
             news = []
-            for new in script_.get('news',{}).get('instoryPage',[]):
+            # for new in script_.get('news',{}).get('instoryPage',[]):
+            next_page = script_['news']['nextPage']
+            for new in script_['news']['instoryPage']:
                 if new.get("docs"):
                     news.extend(new.get("docs"))
+            while next_page is not None:
+                try:
+                    response, session = get_response_news(session, "https://yandex.ru" + next_page)
+                    data = json.loads(response)["data"]
+                    next_page = data['nextPage']
+                    for new in data['instoryPage']:
+                        if new.get("docs"):
+                            news.extend(new.get("docs"))
+                    print(1)
+                except Exception as e:
+                    print(f"new page {e}")
             print(f"news {len(news)}")
             k = 0
             for new in news:
@@ -178,8 +192,8 @@ def get_yandex_data(session=None):
                                                  data=json.dumps({"urls": h_url})).text
                         if new_text:
                             text = new_text
-                    except Exception:
-                        print("text")
+                    except Exception as e:
+                        print(f"can not get text {e}")
                     res.append(
                         {
                             "date_": date_,
