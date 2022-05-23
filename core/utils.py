@@ -349,20 +349,20 @@ def save_yandex_data(json_data, res):
 
     django.db.close_old_connections()
 
-    try:
-        Post.objects.bulk_create(posts, batch_size=200, ignore_conflicts=True)
-        PostContentGlobal.objects.bulk_create(posts_content, batch_size=200, ignore_conflicts=True)
-    except Exception as e:
-        print(e)
+    # try:
+    #     Post.objects.bulk_create(posts, batch_size=200, ignore_conflicts=True)
+    #     PostContentGlobal.objects.bulk_create(posts_content, batch_size=200, ignore_conflicts=True)
+    # except Exception as e:
+    #     print(e)
 
     YandexStatistic.objects.all().delete()
     YandexStatistic.objects.bulk_create(yandex_story, batch_size=200)
     YandexStatistic0.objects.bulk_create(yandex_story_o, batch_size=200)
 
-    try:
-        Post.objects.bulk_update(posts, ['updated', 'group_id'], batch_size=200)
-    except Exception as e:
-        print(e)
+    # try:
+    #     Post.objects.bulk_update(posts, ['updated', 'group_id'], batch_size=200)
+    # except Exception as e:
+    #     print(e)
     # try:
     #     PostContentGlobal.objects.bulk_update(posts_content, ['content', ], batch_size=200)
     # except Exception as e:
