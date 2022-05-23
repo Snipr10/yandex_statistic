@@ -322,30 +322,30 @@ def save_yandex_data(json_data, res):
                 print("can not send RMQ " + str(e))
     except Exception as e:
         print(e)
-    result_group = {}
-    for r in res:
-        if  result_group.get(r['group_id']) is not None:
-            result_group[r['group_id']] = result_group.get(r['group_id']) + 1
-        else:
-            result_group[r['group_id']] = 1
-
-        posts.append(
-            Post(
-                cache_id=get_sphinx_id_16(r['h_url']),
-                owner_sphinx_id=get_sphinx_id("http://" + r['h_url'].split("/")[2]),
-                created=datetime.datetime.now(),
-                group_id=r['group_id'])
-        )
-        posts_content.append(
-            PostContentGlobal(
-                cache_id=get_sphinx_id_16(r['h_url']),
-                content=r['text'],
-                title=r['title'],
-                link=r['h_url'])
-        )
-    print("=====================RESULT======================")
-    print(result_group)
-    print("=====================RESULT END======================")
+    # result_group = {}
+    # # for r in res:
+    # #     if  result_group.get(r['group_id']) is not None:
+    # #         result_group[r['group_id']] = result_group.get(r['group_id']) + 1
+    # #     else:
+    # #         result_group[r['group_id']] = 1
+    # #
+    # #     posts.append(
+    # #         Post(
+    # #             cache_id=get_sphinx_id_16(r['h_url']),
+    # #             owner_sphinx_id=get_sphinx_id("http://" + r['h_url'].split("/")[2]),
+    # #             created=datetime.datetime.now(),
+    # #             group_id=r['group_id'])
+    # #     )
+    # #     posts_content.append(
+    # #         PostContentGlobal(
+    # #             cache_id=get_sphinx_id_16(r['h_url']),
+    # #             content=r['text'],
+    # #             title=r['title'],
+    # #             link=r['h_url'])
+    # #     )
+    # print("=====================RESULT======================")
+    # print(result_group)
+    # print("=====================RESULT END======================")
 
     django.db.close_old_connections()
 
