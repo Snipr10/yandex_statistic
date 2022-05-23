@@ -325,9 +325,9 @@ def save_yandex_data(json_data, res):
     result_group = {}
     for r in res:
         if r['group_id'] in result_group:
-            r['group_id'] = r['group_id'] + 1
+            result_group['group_id'] = result_group['group_id'] + 1
         else:
-            r['group_id'] = 1
+            result_group['group_id'] = 1
 
         posts.append(
             Post(
