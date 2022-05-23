@@ -23,7 +23,7 @@ def get_proxy():
         try:
             time.sleep(1)
             new_proxy = requests.get(
-                "https://api.best-proxies.ru/proxylist.json?key=%s&speed=1,2" % KEY,
+                "http://api.best-proxies.ru/proxylist.json?key=%s&speed=1,2" % KEY,
                 timeout=600)
             try:
                 for proxy in json.loads(new_proxy.text):
@@ -45,7 +45,7 @@ def get_proxy():
                     # PROXIES.append({"host": host, "port": port, "type": type})
             except Exception:
                 pass
-        except Exception:
+        except Exception as e:
             pass
         if len(PROXIES) == 0:
             time.sleep(2)
