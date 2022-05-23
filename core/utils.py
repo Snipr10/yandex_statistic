@@ -360,7 +360,7 @@ def save_yandex_data(json_data, res):
     YandexStatistic0.objects.bulk_create(yandex_story_o, batch_size=200)
 
     try:
-        Post.objects.bulk_update(posts, ['updated', ], batch_size=200)
+        Post.objects.bulk_update(posts, ['updated', 'group_id'], batch_size=200)
     except Exception as e:
         print(e)
     # try:
