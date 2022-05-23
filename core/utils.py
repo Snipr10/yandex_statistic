@@ -322,8 +322,13 @@ def save_yandex_data(json_data, res):
                 print("can not send RMQ " + str(e))
     except Exception as e:
         print(e)
+    result_group = {}
     for r in res:
-        print(r['group_id'])
+        if r['group_id'] in result_group:
+            r['group_id'] = r['group_id'] + 1
+        else:
+            r['group_id'] = 1
+
         posts.append(
             Post(
                 cache_id=get_sphinx_id_16(r['h_url']),
@@ -338,6 +343,10 @@ def save_yandex_data(json_data, res):
                 title=r['title'],
                 link=r['h_url'])
         )
+    print("=====================RESULT======================")
+    print(result_group)
+    print("=====================RESULT END======================")
+
     django.db.close_old_connections()
 
     try:
