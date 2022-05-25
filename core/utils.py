@@ -310,7 +310,7 @@ def save_yandex_data(json_data, res):
                     "author_icon": r.get("author_icon"),
                     "group_id": r.get("group_id"),
                     "images": [],
-                    "keyword_id": 10000005,
+                    "keyword_id": 10000007,
                 }
 
                 channel.basic_publish(exchange='',
@@ -322,13 +322,14 @@ def save_yandex_data(json_data, res):
                 print("can not send RMQ " + str(e))
     except Exception as e:
         print(e)
-    # result_group = {}
-    # # for r in res:
-    # #     if  result_group.get(r['group_id']) is not None:
-    # #         result_group[r['group_id']] = result_group.get(r['group_id']) + 1
-    # #     else:
-    # #         result_group[r['group_id']] = 1
-    # #
+    result_group = {}
+    for r in res:
+        if result_group.get(r['group_id']) is not None:
+            result_group.get(r['group_id']).append(r.get('h_url'))
+        else:
+            result_group[r['group_id']] = [r.get('h_url')]
+    print(result_group)
+
     # #     posts.append(
     # #         Post(
     # #             cache_id=get_sphinx_id_16(r['h_url']),
