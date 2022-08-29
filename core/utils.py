@@ -251,6 +251,43 @@ def save_yandex_data(json_data, res):
     # now_time = datetime.now(timezone.utc)
     now_time = update_time_timezone(datetime.datetime.now())
 
+    posts = []
+    posts_content = []
+    try:
+        parameters = pika.URLParameters("amqp://full_posts_parser:nJ6A07XT5PgY@192.168.5.46:5672/smi_tasks")
+        connection = pika.BlockingConnection(parameters=parameters)
+        channel = connection.channel()
+        for r in res:
+            try:
+                rmq_json_data = {
+                    "title": r.get('title', ''),
+                    "content": r.get("text"),
+                    "created": r.get('date_').strftime("%Y-%m-%d %H:%M:%S"),
+                    "url": r.get('h_url'),
+                    "author_name": r.get("author_name"),
+                    "author_icon": r.get("author_icon"),
+                    "group_id": r.get("group_id"),
+                    "images": [],
+                    "keyword_id": 10000007,
+                }
+
+                channel.basic_publish(exchange='',
+                                      routing_key='smi_posts',
+                                      body=json.dumps(rmq_json_data))
+                print("SEND RMQ")
+
+            except Exception as e:
+                print("can not send RMQ " + str(e))
+    except Exception as e:
+        print(e)
+    result_group = {}
+    for r in res:
+        if result_group.get(r['group_id']) is not None:
+            result_group.get(r['group_id']).append(r.get('h_url'))
+        else:
+            result_group[r['group_id']] = [r.get('h_url')]
+    print(result_group)
+    time.sleep(120)
     for story in json_data['news']['storyList']:
         url = story['url'].split("?")[0]
         yandex_story.append(
@@ -293,43 +330,6 @@ def save_yandex_data(json_data, res):
 
             )
         )
-    posts = []
-    posts_content = []
-    try:
-        parameters = pika.URLParameters("amqp://full_posts_parser:nJ6A07XT5PgY@192.168.5.46:5672/smi_tasks")
-        connection = pika.BlockingConnection(parameters=parameters)
-        channel = connection.channel()
-        for r in res:
-            try:
-                rmq_json_data = {
-                    "title": r.get('title', ''),
-                    "content": r.get("text"),
-                    "created": r.get('date_').strftime("%Y-%m-%d %H:%M:%S"),
-                    "url": r.get('h_url'),
-                    "author_name": r.get("author_name"),
-                    "author_icon": r.get("author_icon"),
-                    "group_id": r.get("group_id"),
-                    "images": [],
-                    "keyword_id": 10000007,
-                }
-
-                channel.basic_publish(exchange='',
-                                      routing_key='smi_posts',
-                                      body=json.dumps(rmq_json_data))
-                print("SEND RMQ")
-
-            except Exception as e:
-                print("can not send RMQ " + str(e))
-    except Exception as e:
-        print(e)
-    result_group = {}
-    for r in res:
-        if result_group.get(r['group_id']) is not None:
-            result_group.get(r['group_id']).append(r.get('h_url'))
-        else:
-            result_group[r['group_id']] = [r.get('h_url')]
-    print(result_group)
-
     # #     posts.append(
     # #         Post(
     # #             cache_id=get_sphinx_id_16(r['h_url']),
