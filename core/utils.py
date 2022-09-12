@@ -133,7 +133,9 @@ def get_yandex_data(session=None):
     json_data = None
     for content in BeautifulSoup(response).find_all("script"):
         if DATA_TEXT in str(content):
-            json_data = json.loads(str(content.contents[0]).replace(DATA_TEXT, "").strip()[:-1])
+            str_json = str(content.contents[0]).replace(DATA_TEXT, "").strip()[:-1]
+            str_json = str_json[:str_json.rfind(';window.Ya.Neo.dataSource["neo"]')]
+            json_data = json.loads(str_json)
             break
     i = 0
     if json_data is not None:
@@ -152,7 +154,9 @@ def get_yandex_data(session=None):
             script_ = None
             for script in BeautifulSoup(response).find_all("script"):
                 if "window.Ya.Neo.dataSource" in str(script):
-                    script_ = json.loads(script.string[:-1].replace("window.Ya.Neo.dataSource=", ""))
+                    str_json = script.string[:-1].replace("window.Ya.Neo.dataSource=", "")
+                    str_json = str_json[:str_json.rfind(';window.Ya.Neo.dataSource["neo"]')]
+                    script_ = json.loads(str_json)
                     break
             news = []
             # for new in script_.get('news',{}).get('instoryPage',[]):

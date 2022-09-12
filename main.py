@@ -28,7 +28,7 @@ def main():
 
 DATA_URL = "https://yandex.ru/news/top/region/Saint_Petersburg"
 DATA_TEXT = "window.Ya.Neo.dataSource="
-KEY = "ab5d05936452a51253d0a466fccf637e"
+KEY = "548b8a1d79d61255f79c01b47dd141c5"
 PROXIES = []
 
 
