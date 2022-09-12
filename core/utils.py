@@ -14,7 +14,7 @@ from core.models import YandexStatistic, YandexStatistic0, Post, PostContentGlob
 
 DATA_URL = "https://yandex.ru/news/top/region/Saint_Petersburg"
 DATA_TEXT = "window.Ya.Neo.dataSource="
-KEY = "08766f4bdf9cc20caf3a899642cb3fa2"
+KEY = "548b8a1d79d61255f79c01b47dd141c5"
 PROXIES = []
 
 
