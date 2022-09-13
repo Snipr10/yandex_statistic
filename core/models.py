@@ -65,3 +65,18 @@ class PostContentGlobal(models.Model):
 
     class Meta:
         db_table = 'prsr_parser_global_post_content'
+
+
+class PostGroupsGlobal(models.Model):
+    id = models.CharField(primary_key=True, max_length=255)
+    name = models.CharField(max_length=255, null=True, blank=True)
+    url = models.CharField(max_length=255, null=True, blank=True)
+    post_count = models.IntegerField(default=0, null=True, blank=True)
+    post_count_soc = models.IntegerField(default=0, null=True, blank=True)
+    found_date = models.DateField(null=True, blank=True)
+    taken = models.IntegerField(default=0, null=True, blank=True)
+    updated = models.DateTimeField(auto_now_add=True)
+    last_modified = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        db_table = 'prsr_parser_global_groups'
