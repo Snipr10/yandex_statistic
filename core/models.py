@@ -73,7 +73,7 @@ class PostGroupsGlobal(models.Model):
     url = models.CharField(max_length=255, null=True, blank=True)
     post_count = models.IntegerField(default=0, null=True, blank=True)
     post_count_soc = models.IntegerField(default=0, null=True, blank=True)
-    found_date = models.DateField(null=True, blank=True)
+    found_date = models.DateField(auto_now_add=True)
     taken = models.IntegerField(default=0, null=True, blank=True)
     updated = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(null=True, blank=True)
