@@ -63,15 +63,10 @@ if __name__ == '__main__':
     # connection = pika.BlockingConnection(parameters=parameters)
     # channel = connection.channel()
     django.setup()
-    from core.utils import get_yandex_data
+    from core.utils import get_yandex_data, save_PostGroupsGlobal
     while True:
         try:
-            from core.models import PostGroupsGlobal
-
-            PostGroupsGlobal.objects.create(id="e150ddbb07dca72fe51b1ea63c747a21",
-                                            name="Стоимость квадратного метра в хрущёвках Петербурга упала на 30 тыс. рублей",
-                                            url="https://dzen.ru/news/story/Stoimost_kvadratnogo_metra_vkhrushhyovkakh_Peterburga_upala_na30_tys._rublej--5078e5fd0867f34309d07f0e898422e0")
-            print("start while true")
+            save_PostGroupsGlobal()
             get_yandex_data()
             print("stop")
         except Exception as e:
