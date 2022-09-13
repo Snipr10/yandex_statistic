@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 
 
@@ -76,7 +78,7 @@ class PostGroupsGlobal(models.Model):
     found_date = models.DateField(auto_now_add=True)
     taken = models.IntegerField(default=0, null=True, blank=True)
     updated = models.DateTimeField(auto_now_add=True)
-    last_modified = models.DateTimeField(null=True, blank=True)
+    last_modified = models.DateTimeField(default='01/01/2000', blank=True)
 
     class Meta:
         db_table = 'prsr_parser_global_groups'
