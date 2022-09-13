@@ -12,7 +12,7 @@ import django.db
 # from core.models import YandexStatistic
 from core.models import YandexStatistic, YandexStatistic0, Post, PostContentGlobal
 
-DATA_URL = "https://yandex.ru/news/top/region/Saint_Petersburg"
+DATA_URL = "https://dzen.ru/news/top/region/Saint_Petersburg?issue_tld=ru"
 DATA_TEXT = "window.Ya.Neo.dataSource="
 KEY = "548b8a1d79d61255f79c01b47dd141c5"
 PROXIES = []
@@ -52,6 +52,7 @@ def get_proxy():
             return get_proxy()
     proxy = PROXIES.pop()
     session = generate_proxy_session(proxy.get("host"), proxy.get("port"), proxy.get("type"))
+    session.headers["Cookie"] = "Session_id=noauth:;"
     if check_yandex_url(session):
         return session
     else:
@@ -93,22 +94,24 @@ def get_response_news(new_session, url):
     while True and new_response is None:
         try:
             headers = {
-                'authority': 'yandex.ru',
-                'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-                'accept-language': 'ru-RU,ru;q=0.9',
-                'dnt': '1',
-                'sec-ch-ua-mobile': '?0',
-                'sec-ch-ua-platform': '"Linux"',
-                'sec-fetch-dest': 'document',
-                'sec-fetch-mode': 'navigate',
-                'sec-fetch-site': 'none',
-                'sec-fetch-user': '?1',
-                'upgrade-insecure-requests': '1',
-                'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36'
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+                'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
+                'Connection': 'keep-alive',
+                'Cookie': 'Session_id=noauth:;',
+                'DNT': '1',
+                'Sec-Fetch-Dest': 'document',
+                'Sec-Fetch-Mode': 'navigate',
+                'Sec-Fetch-Site': 'none',
+                'Sec-Fetch-User': '?1',
+                'Upgrade-Insecure-Requests': '1',
+                'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Mobile Safari/537.36',
+                'sec-ch-ua': '" Not A;Brand";v="99", "Chromium";v="100", "Google Chrome";v="100"',
+                'sec-ch-ua-mobile': '?1',
+                'sec-ch-ua-platform': '"Android"'
             }
 
             try:
-                new_response = new_session.get(url, headers=headers, timeout=15).text
+                new_response = new_session.get(f"{url}?issue_tld=ru", headers=headers, timeout=15).text
             except Exception as e:
                 print(url)
                 print(new_session.proxies)
