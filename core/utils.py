@@ -316,8 +316,8 @@ def save_yandex_data(json_data, res):
         )
 
         global_models.append(
-            PostGroupsGlobal.objects.create(
-                id=str(story['id']),
+            PostGroupsGlobal(
+                id=str(hashlib.md5(url.encode('utf-8')).hexdigest()),
                 name=story['title'],
                 url=url
             )
