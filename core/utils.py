@@ -10,7 +10,7 @@ from dateutil.parser import parse
 import django.db
 
 # from core.models import YandexStatistic
-from core.models import YandexStatistic, YandexStatistic0, Post, PostContentGlobal
+from core.models import YandexStatistic, YandexStatistic0, Post, PostContentGlobal, PostGroupsGlobal
 
 DATA_URL = "https://dzen.ru/news/top/region/Saint_Petersburg?issue_tld=ru"
 DATA_TEXT = "window.Ya.Neo.dataSource="
@@ -169,7 +169,7 @@ def get_yandex_data(session=None):
                     news.extend(new.get("docs"))
             while next_page is not None:
                 try:
-                    response, session = get_response_news(session, "https://dzen.ru" + next_page+"&issue_tld=ru")
+                    response, session = get_response_news(session, "https://dzen.ru" + next_page + "&issue_tld=ru")
                     data = json.loads(response)["data"]
                     next_page = data['nextPage']
                     for new in data['instoryPage']:
@@ -254,7 +254,7 @@ def update_time_timezone(my_time):
 
 def save_yandex_data(json_data, res):
     yandex_story = []
-
+    global_models = []
     # now_time = datetime.now(timezone.utc)
     now_time = update_time_timezone(datetime.datetime.now())
 
@@ -314,6 +314,14 @@ def save_yandex_data(json_data, res):
                 group_id=hashlib.md5(url.encode()).hexdigest()
             )
         )
+
+        global_models.append(
+            PostGroupsGlobal.objects.create(
+                id=str(story['id']),
+                name=story['title'],
+                url=url
+            )
+        )
     yandex_story_o = []
 
     for story in json_data['news']['storyList']:
@@ -366,6 +374,10 @@ def save_yandex_data(json_data, res):
     YandexStatistic.objects.all().delete()
     YandexStatistic.objects.bulk_create(yandex_story, batch_size=200)
     YandexStatistic0.objects.bulk_create(yandex_story_o, batch_size=200)
+    try:
+        PostGroupsGlobal.objects.bulk_create(global_models, batch_size=200)
+    except Exception:
+        pass
 
     # try:
     #     Post.objects.bulk_update(posts, ['updated', 'group_id'], batch_size=200)
@@ -387,13 +399,3 @@ def get_sphinx_id_16(url):
     m = hashlib.md5()
     m.update(url.encode())
     return int(str(int(m.hexdigest()[:16], 16))[:16])
-
-
-def save_PostGroupsGlobal():
-    from core.models import PostGroupsGlobal
-    print("start save")
-
-    PostGroupsGlobal.objects.create(id="e150ddbb07dca72fe51b1ea63c747a21",
-                                    name="Стоимость квадратного метра в хрущёвках Петербурга упала на 30 тыс. рублей",
-                                    url="https://dzen.ru/news/story/Stoimost_kvadratnogo_metra_vkhrushhyovkakh_Peterburga_upala_na30_tys._rublej--5078e5fd0867f34309d07f0e898422e0")
-    print("stop save")
