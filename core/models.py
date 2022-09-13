@@ -78,7 +78,7 @@ class PostGroupsGlobal(models.Model):
     found_date = models.DateField(auto_now_add=True)
     taken = models.IntegerField(default=0, null=True, blank=True)
     updated = models.DateTimeField(auto_now_add=True)
-    last_modified = models.CharField(max_length=255, null=True, blank=True)
+    last_modified = models.CharField(max_length=255, null=True, blank=True, default="0001-01-01 00:00:00")
 
     class Meta:
         db_table = 'prsr_parser_global_groups'
