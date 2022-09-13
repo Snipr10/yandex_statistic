@@ -111,7 +111,7 @@ def get_response_news(new_session, url):
             }
 
             try:
-                new_response = new_session.get(f"{url}?issue_tld=ru", headers=headers, timeout=15).text
+                new_response = new_session.get(url, headers=headers, timeout=15).text
             except Exception as e:
                 print(url)
                 print(new_session.proxies)
@@ -151,7 +151,7 @@ def get_yandex_data(session=None):
             i += 1
             print(f"i {i}")
             url_full = url.replace("/story/", "/instory/")
-            url_full = url_full.replace(urls[-1].split("/")[3], "news")
+            url_full = url_full.replace(urls[-1].split("/")[3], "news") + "?issue_tld=ru"
             response, session = get_response_news(session, url_full)
 
             script_ = None
@@ -169,7 +169,7 @@ def get_yandex_data(session=None):
                     news.extend(new.get("docs"))
             while next_page is not None:
                 try:
-                    response, session = get_response_news(session, "https://yandex.ru" + next_page)
+                    response, session = get_response_news(session, "https://dzen.ru" + next_page+"&issue_tld=ru")
                     data = json.loads(response)["data"]
                     next_page = data['nextPage']
                     for new in data['instoryPage']:
