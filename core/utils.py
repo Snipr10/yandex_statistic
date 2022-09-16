@@ -52,7 +52,7 @@ def get_proxy():
             return get_proxy()
     proxy = PROXIES.pop()
     session = generate_proxy_session(proxy.get("host"), proxy.get("port"), proxy.get("type"))
-    session.headers["Cookie"] = "Session_id=noauth:;"
+    session.headers["Cookie"] = "Session_id=noauth:;sso_checked=1;"
     if check_yandex_url(session):
         return session
     else:
@@ -97,7 +97,7 @@ def get_response_news(new_session, url):
                 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
                 'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
                 'Connection': 'keep-alive',
-                'Cookie': 'Session_id=noauth:;',
+                'Cookie': 'Session_id=noauth:;sso_checked=1;',
                 'DNT': '1',
                 'Sec-Fetch-Dest': 'document',
                 'Sec-Fetch-Mode': 'navigate',
