@@ -366,8 +366,23 @@ def save_yandex_data(json_data, res):
 
     try:
         PostGroupsGlobal.objects.bulk_create(global_models, batch_size=200, ignore_conflicts=True)
+        for g in global_models:
+            try:
+                g.save()
+            except Exception:
+                try:
+                    g.save()
+                except Exception:
+                    pass
     except Exception:
-        pass
+        for g in global_models:
+            try:
+                g.save()
+            except Exception:
+                try:
+                    g.save()
+                except Exception:
+                    pass
     django.db.close_old_connections()
 
     # try:
