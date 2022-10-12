@@ -362,7 +362,12 @@ def save_yandex_data(json_data, res):
     # print("=====================RESULT======================")
     # print(result_group)
     # print("=====================RESULT END======================")
+    django.db.close_old_connections()
 
+    try:
+        PostGroupsGlobal.objects.bulk_create(global_models, batch_size=200, ignore_conflicts=True)
+    except Exception:
+        pass
     django.db.close_old_connections()
 
     # try:
