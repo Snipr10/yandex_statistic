@@ -366,23 +366,10 @@ def save_yandex_data(json_data, res):
 
     try:
         PostGroupsGlobal.objects.bulk_create(global_models, batch_size=200, ignore_conflicts=True)
-        for g in global_models:
-            try:
-                g.save()
-            except Exception:
-                try:
-                    g.save()
-                except Exception:
-                    pass
+        save_group(global_models)
     except Exception:
-        for g in global_models:
-            try:
-                g.save()
-            except Exception:
-                try:
-                    g.save()
-                except Exception:
-                    pass
+        save_group(global_models)
+
     django.db.close_old_connections()
 
     # try:
@@ -410,31 +397,27 @@ def save_yandex_data(json_data, res):
         django.db.close_old_connections()
     except Exception:
         pass
-    try:
-        PostGroupsGlobal.objects.bulk_create(global_models, batch_size=200, ignore_conflicts=True)
-    except Exception:
+    non_stop = True
+    attempt = 0
+    while non_stop and attempt < 10:
         try:
-            PostGroupsGlobal.objects.bulk_create(global_models, batch_size=200)
+            PostGroupsGlobal.objects.bulk_create(global_models, batch_size=200, ignore_conflicts=True)
+            non_stop = False
+        except Exception:
+            pass
+        save_group(global_models)
+        attempt += 1
+
+
+def save_group(global_models):
+    for g in global_models:
+        try:
+            g.save()
         except Exception:
             try:
-                PostGroupsGlobal.objects.bulk_create(global_models, batch_size=200)
+                g.save()
             except Exception:
-                try:
-                    PostGroupsGlobal.objects.bulk_create(global_models, batch_size=200, ignore_conflicts=Tru)
-                except Exception:
-                    try:
-                        PostGroupsGlobal.objects.bulk_create(global_models, batch_size=200)
-                    except Exception:
-                        for g in global_models:
-                            try:
-                                g.save()
-                            except Exception:
-                                try:
-                                    g.save()
-                                except Exception:
-                                    pass
-
-
+                pass
     # try:
     #     Post.objects.bulk_update(posts, ['updated', 'group_id'], batch_size=200)
     # except Exception as e:
