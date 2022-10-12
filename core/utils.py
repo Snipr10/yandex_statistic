@@ -317,7 +317,7 @@ def save_yandex_data(json_data, res):
 
         global_models.append(
             PostGroupsGlobal(
-                id=str(hashlib.md5(url.encode('utf-8')).hexdigest()),
+                id=hashlib.md5(url.encode()).hexdigest(),
                 name=story['title'],
                 url=url
             )
@@ -372,12 +372,44 @@ def save_yandex_data(json_data, res):
     #     print(e)
 
     YandexStatistic.objects.all().delete()
-    YandexStatistic.objects.bulk_create(yandex_story, batch_size=200)
-    YandexStatistic0.objects.bulk_create(yandex_story_o, batch_size=200)
     try:
-        PostGroupsGlobal.objects.bulk_create(global_models, batch_size=200)
+        YandexStatistic.objects.bulk_create(yandex_story, batch_size=200, ignore_conflicts=True)
     except Exception:
-        pass
+        try:
+            YandexStatistic.objects.bulk_create(yandex_story, batch_size=200)
+        except Exception:
+            pass
+    try:
+        YandexStatistic0.objects.bulk_create(yandex_story_o, batch_size=200, ignore_conflicts=True)
+    except Exception:
+        try:
+            YandexStatistic0.objects.bulk_create(yandex_story_o, batch_size=200)
+        except Exception:
+            pass
+    try:
+        PostGroupsGlobal.objects.bulk_create(global_models, batch_size=200, ignore_conflicts=True)
+    except Exception:
+        try:
+            PostGroupsGlobal.objects.bulk_create(global_models, batch_size=200)
+        except Exception:
+            try:
+                PostGroupsGlobal.objects.bulk_create(global_models, batch_size=200)
+            except Exception:
+                try:
+                    PostGroupsGlobal.objects.bulk_create(global_models, batch_size=200)
+                except Exception:
+                    try:
+                        PostGroupsGlobal.objects.bulk_create(global_models, batch_size=200)
+                    except Exception:
+                        for g in global_models:
+                            try:
+                                g.save()
+                            except Exception:
+                                try:
+                                    g.save()
+                                except Exception:
+                                    pass
+
 
     # try:
     #     Post.objects.bulk_update(posts, ['updated', 'group_id'], batch_size=200)
