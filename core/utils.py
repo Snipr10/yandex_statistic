@@ -146,10 +146,8 @@ def get_yandex_data(session=None):
         res = []
         for story in json_data['news']['storyList']:
             urls.append(story['url'].split("?")[0])
-        print(f"URLS SIZE {len(urls)}")
         for url in urls:
             i += 1
-            print(f"i {i}")
             url_full = url.replace("/story/", "/instory/")
             url_full = url_full.replace(urls[-1].split("/")[3], "news") + "?issue_tld=ru"
             response, session = get_response_news(session, url_full)
@@ -175,14 +173,11 @@ def get_yandex_data(session=None):
                     for new in data['instoryPage']:
                         if new.get("docs"):
                             news.extend(new.get("docs"))
-                    print(1)
                 except Exception as e:
                     print(f"new page {e}")
-            print(f"news {len(news)}")
             k = 0
             for new in news:
                 k += 1
-                print(f"k {k}")
                 try:
                     text = new['text'][-1]["text"]
                     title = new['title'][0]['text']
@@ -283,7 +278,7 @@ def save_yandex_data(json_data, res):
                 channel.basic_publish(exchange='',
                                       routing_key='smi_posts',
                                       body=json.dumps(rmq_json_data))
-                print("SEND RMQ")
+                print(f"SEND RMQ {r.get('h_url')} {r.get('group_id')}")
                 d_set.add(r.get("group_id"))
 
             except Exception as e:
@@ -298,7 +293,6 @@ def save_yandex_data(json_data, res):
             result_group.get(r['group_id']).append(r.get('h_url'))
         else:
             result_group[r['group_id']] = [r.get('h_url')]
-    print(result_group)
     time.sleep(120)
     for story in json_data['news']['storyList']:
         url = story['url'].split("?")[0]
