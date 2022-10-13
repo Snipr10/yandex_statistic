@@ -260,6 +260,8 @@ def save_yandex_data(json_data, res):
 
     posts = []
     posts_content = []
+    d_set = set()
+
     try:
         parameters = pika.URLParameters("amqp://full_posts_parser:nJ6A07XT5PgY@192.168.5.46:5672/smi_tasks")
         connection = pika.BlockingConnection(parameters=parameters)
@@ -282,11 +284,14 @@ def save_yandex_data(json_data, res):
                                       routing_key='smi_posts',
                                       body=json.dumps(rmq_json_data))
                 print("SEND RMQ")
+                d_set.add(r.get("group_id"))
 
             except Exception as e:
                 print("can not send RMQ " + str(e))
     except Exception as e:
         print(e)
+    if len(d_set) < 15:
+        raise Exception("len(d_set)")
     result_group = {}
     for r in res:
         if result_group.get(r['group_id']) is not None:
