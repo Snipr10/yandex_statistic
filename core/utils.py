@@ -293,7 +293,7 @@ def save_yandex_data(json_data, res):
             result_group.get(r['group_id']).append(r.get('h_url'))
         else:
             result_group[r['group_id']] = [r.get('h_url')]
-    time.sleep(120)
+    time.sleep(60*15)
     for story in json_data['news']['storyList']:
         url = story['url'].split("?")[0]
         yandex_story.append(
