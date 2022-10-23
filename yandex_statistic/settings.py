@@ -88,7 +88,7 @@ DATABASES = {
         'NAME': 'parser',
         'USER': 'parser',
         'PASSWORD': '9ExtUS8uRyF9FSDf',
-        'HOST': '192.168.5.14',
+        'HOST': '192.168.5.11',
         'PORT': '3306',
 
     }
