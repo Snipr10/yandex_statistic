@@ -293,7 +293,6 @@ def save_yandex_data(json_data, res):
             result_group.get(r['group_id']).append(r.get('h_url'))
         else:
             result_group[r['group_id']] = [r.get('h_url')]
-    time.sleep(60*15)
     for story in json_data['news']['storyList']:
         url = story['url'].split("?")[0]
         yandex_story.append(
@@ -363,6 +362,18 @@ def save_yandex_data(json_data, res):
     # print("=====================RESULT END======================")
     django.db.close_old_connections()
 
+    time.sleep(60*10)
+
+    forgot_story = []
+    for k, v in result_group.items():
+        if not checker(k):
+            forgot_story.append(k)
+            add_again(res, k)
+    if len(forgot_story) > 0:
+        time.sleep(60 * 5)
+    for k in forgot_story:
+        if not checker(k):
+            raise Exception("can not find story")
     try:
         PostGroupsGlobal.objects.bulk_create(global_models, batch_size=200, ignore_conflicts=True)
         save_group(global_models)
@@ -406,6 +417,50 @@ def save_yandex_data(json_data, res):
             pass
         save_group(global_models)
         attempt += 1
+
+
+def add_again(res, group_id):
+    try:
+        parameters = pika.URLParameters("amqp://full_posts_parser:nJ6A07XT5PgY@192.168.5.46:5672/smi_tasks")
+        connection = pika.BlockingConnection(parameters=parameters)
+        channel = connection.channel()
+        for r in res:
+            if r.get("group_id") == group_id:
+                try:
+                    rmq_json_data = {
+                        "title": r.get('title', ''),
+                        "content": r.get("text", ""),
+                        "created": r.get('date_').strftime("%Y-%m-%d %H:%M:%S"),
+                        "url": r.get('h_url'),
+                        "author_name": r.get("author_name", ""),
+                        "author_icon": r.get("author_icon", ""),
+                        "group_id": r.get("group_id"),
+                        "images": [],
+                        "keyword_id": 10000007,
+                    }
+
+                    channel.basic_publish(exchange='',
+                                          routing_key='smi_posts',
+                                          body=json.dumps(rmq_json_data))
+                    print(f"SEND RMQ {r.get('h_url')} {r.get('group_id')}")
+
+                except Exception as e:
+                    print("can not send RMQ " + str(e))
+    except Exception as e:
+        print(e)
+
+
+def checker(r, attempt=0):
+    try:
+        p = Post.objects.filter(group_id=r)
+        if len(p) > 0:
+            return True
+    except Exception:
+        pass
+    time.sleep(30)
+    if attempt > 2:
+        return False
+    return checker(r, attempt + 1)
 
 
 def save_group(global_models):
