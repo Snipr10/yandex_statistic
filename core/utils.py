@@ -272,7 +272,7 @@ def save_yandex_data(json_data, res):
                     "author_icon": r.get("author_icon"),
                     "group_id": r.get("group_id"),
                     "images": [],
-                    "keyword_id": 10000007,
+                    "keyword_id": 10000003,
                 }
 
                 channel.basic_publish(exchange='',
@@ -436,7 +436,7 @@ def add_again(res, group_id):
                         "author_icon": r.get("author_icon", ""),
                         "group_id": r.get("group_id"),
                         "images": [],
-                        "keyword_id": 10000007,
+                        "keyword_id": 10000003,
                     }
 
                     channel.basic_publish(exchange='',
