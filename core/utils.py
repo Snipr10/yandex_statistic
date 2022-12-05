@@ -247,6 +247,20 @@ def update_time_timezone(my_time):
     return my_time + datetime.timedelta(hours=3)
 
 
+def send_to_rmq_full_test(rmq_json_data):
+    try:
+        parameters = pika.URLParameters("amqp://full_posts_parser:nJ6A07XT5PgY@192.168.5.46:5672/smi_tasks")
+        connection = pika.BlockingConnection(parameters=parameters)
+        channel = connection.channel()
+
+        channel.basic_publish(exchange='',
+                              routing_key='smi_posts',
+                              body=json.dumps(rmq_json_data))
+
+    except Exception as e:
+        print("can not send RMQ " + str(e))
+
+
 def save_yandex_data(json_data, res):
     yandex_story = []
     global_models = []
@@ -262,6 +276,7 @@ def save_yandex_data(json_data, res):
         connection = pika.BlockingConnection(parameters=parameters)
         channel = connection.channel()
         for r in res:
+            rmq_json_data = None
             try:
                 rmq_json_data = {
                     "title": r.get('title', ''),
@@ -283,6 +298,7 @@ def save_yandex_data(json_data, res):
 
             except Exception as e:
                 print("can not send RMQ " + str(e))
+            send_to_rmq_full_test(rmq_json_data)
     except Exception as e:
         print(e)
     if len(d_set) < 15:
