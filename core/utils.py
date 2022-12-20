@@ -52,7 +52,7 @@ def get_proxy():
             return get_proxy()
     proxy = PROXIES.pop()
     session = generate_proxy_session(proxy.get("host"), proxy.get("port"), proxy.get("type"))
-    session.headers["Cookie"] = "Session_id=noauth:;sso_checked=1;"
+    session.headers["Cookie"] = 'zen_sso_checked=1; Session_id=noauth:;sso_checked=1;'
     if check_yandex_url(session):
         return session
     else:
@@ -95,19 +95,19 @@ def get_response_news(new_session, url):
         try:
             headers = {
                 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-                'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
+                'Accept-Language': 'ru-RU,ru;q=0.9',
                 'Connection': 'keep-alive',
-                'Cookie': 'Session_id=noauth:;sso_checked=1;',
                 'DNT': '1',
+                'Referer': 'https://sso.dzen.ru/',
                 'Sec-Fetch-Dest': 'document',
                 'Sec-Fetch-Mode': 'navigate',
-                'Sec-Fetch-Site': 'none',
-                'Sec-Fetch-User': '?1',
+                'Sec-Fetch-Site': 'same-site',
                 'Upgrade-Insecure-Requests': '1',
-                'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Mobile Safari/537.36',
-                'sec-ch-ua': '" Not A;Brand";v="99", "Chromium";v="100", "Google Chrome";v="100"',
+                'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Mobile Safari/537.36',
+                'sec-ch-ua': '"Not?A_Brand";v="8", "Chromium";v="108", "Google Chrome";v="108"',
                 'sec-ch-ua-mobile': '?1',
-                'sec-ch-ua-platform': '"Android"'
+                'sec-ch-ua-platform': '"Android"',
+                'Cookie': 'zen_sso_checked=1; Session_id=noauth:;sso_checked=1;'
             }
 
             try:
