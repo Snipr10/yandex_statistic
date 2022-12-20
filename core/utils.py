@@ -378,7 +378,7 @@ def save_yandex_data(json_data, res):
     # print("=====================RESULT END======================")
     django.db.close_old_connections()
 
-    time.sleep(60*10)
+    time.sleep(60 * 10)
 
     forgot_story = []
     for k, v in result_group.items():

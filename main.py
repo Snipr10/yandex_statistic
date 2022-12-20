@@ -68,6 +68,8 @@ if __name__ == '__main__':
     from core.models import PostGroupsGlobal
     url = "https://dzen.ru/news/story/Moshenniki_vymanili_13_millionov_rublej_upensionerki_izMurino--ac262d19bfa00d76b8afad78dd9b2d47"
     print(url)
+    get_yandex_data()
+
     global_models = []
     global_models.append(
         PostGroupsGlobal(
