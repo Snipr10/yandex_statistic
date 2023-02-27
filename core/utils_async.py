@@ -12,7 +12,7 @@ from core.models import YandexStatistic, YandexStatistic0
 
 DATA_URL = "https://yandex.ru/news/top/region/Saint_Petersburg"
 DATA_TEXT = "window.Ya.Neo.dataSource="
-KEY = "4c5cda497404f5f02e1cb50b1b8251b2"
+KEY = "developer"
 PROXIES = []
 
 
