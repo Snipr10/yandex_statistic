@@ -5,8 +5,9 @@ services:
   redis:
     image: redis:alpine
     network_mode: host
+    command: --port 6380
     ports:
-      - "6380:6379"
+      - "6380:6380"
     expose:
       - "6380"
 
