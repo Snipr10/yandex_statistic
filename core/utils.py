@@ -23,7 +23,7 @@ def get_proxy():
         try:
             time.sleep(1)
             new_proxy = requests.get(
-                "http://api.best-proxies.ru/proxylist.json?key=%s&speed=1,2" % KEY,
+                "http://api.best-proxies.ru/proxylist.json?key=%s&type=http,https" % KEY,
                 timeout=600)
             try:
                 for proxy in json.loads(new_proxy.text):
@@ -48,7 +48,7 @@ def get_proxy():
         except Exception as e:
             print(f"get proxy: {e}")
         if len(PROXIES) == 0:
-            time.sleep(2)
+            time.sleep(7)
             return get_proxy()
     proxy = PROXIES.pop()
     session = generate_proxy_session(proxy.get("host"), proxy.get("port"), proxy.get("type"))
