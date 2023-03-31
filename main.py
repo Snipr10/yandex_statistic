@@ -63,24 +63,25 @@ if __name__ == '__main__':
     # connection = pika.BlockingConnection(parameters=parameters)
     # channel = connection.channel()
     django.setup()
-    from core.utils import get_yandex_data
+    from core.utils import get_yandex_data, get_proxy
     from core.models import PostGroupsGlobal
     url = "https://dzen.ru/news/story/Moshenniki_vymanili_13_millionov_rublej_upensionerki_izMurino--ac262d19bfa00d76b8afad78dd9b2d47"
     print(url)
-    get_yandex_data()
+    proxy = get_proxy()
 
-    global_models = []
-    global_models.append(
-        PostGroupsGlobal(
-            id=hashlib.md5(url.encode()).hexdigest(),
-            name="Мошенники выманили 13 миллионов рублей у пенсионерки из Мурино",
-            url=url
-        )
-    )
-    PostGroupsGlobal.objects.bulk_create(global_models, batch_size=200, ignore_conflicts=True)
-    print("done")
-
-    # loop = asyncio.new_event_loop()
-    # login_result = loop.run_until_complete(asyncio.wait_for(get_yandex_data(), 6000))
-
-    # main()
+    # get_yandex_data()
+    # global_models = []
+    # global_models.append(
+    #     PostGroupsGlobal(
+    #         id=hashlib.md5(url.encode()).hexdigest(),
+    #         name="Мошенники выманили 13 миллионов рублей у пенсионерки из Мурино",
+    #         url=url
+    #     )
+    # )
+    # PostGroupsGlobal.objects.bulk_create(global_models, batch_size=200, ignore_conflicts=True)
+    # print("done")
+    #
+    # # loop = asyncio.new_event_loop()
+    # # login_result = loop.run_until_complete(asyncio.wait_for(get_yandex_data(), 6000))
+    #
+    # # main()
