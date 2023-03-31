@@ -46,7 +46,7 @@ def get_proxy():
             except Exception:
                 pass
         except Exception as e:
-            pass
+            print(f"get proxy: {e}")
         if len(PROXIES) == 0:
             time.sleep(2)
             return get_proxy()
