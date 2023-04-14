@@ -212,7 +212,10 @@ def get_yandex_data(session=None):
                     print(f"newsE {e}")
         print("save")
         for k, i in logger_result.items():
-            print(f"{k} -- {i}")
+            for story in json_data['news']['storyList']:
+                url = story['url'].split("?")[0]
+                if url == k:
+                    print(f"{k} -- {i} -- {story['storyDocs']}")
         save_yandex_data(json_data, res)
         # for data in BeautifulSoup(response).find_all("div", {"class": "mg-snippet mg-snippet_flat news-search-story__snippet"}):
         #     try:
