@@ -65,12 +65,12 @@ if __name__ == '__main__':
     django.setup()
     from core.utils import get_yandex_data, get_proxy
     from core.models import PostGroupsGlobal
-    url = "https://dzen.ru/news/story/Moshenniki_vymanili_13_millionov_rublej_upensionerki_izMurino--ac262d19bfa00d76b8afad78dd9b2d47"
-    print(url)
-    proxy = get_proxy()
-    print(proxy)
+    # url = "https://dzen.ru/news/story/Moshenniki_vymanili_13_millionov_rublej_upensionerki_izMurino--ac262d19bfa00d76b8afad78dd9b2d47"
+    # print(url)
+    # proxy = get_proxy()
+    # print(proxy)
 
-    # get_yandex_data()
+    get_yandex_data()
     # global_models = []
     # global_models.append(
     #     PostGroupsGlobal(

@@ -122,7 +122,6 @@ def get_response_news(new_session, url):
             if new_response is not None and "captcha" in new_response:
                 new_response = None
                 new_session = get_proxy()
-                # return get_response_news(new_session, url)
         except Exception as e:
             print(f"get_response_news2 {e}")
             new_response = None
@@ -142,6 +141,7 @@ def get_yandex_data(session=None):
             break
     i = 0
     if json_data is not None:
+        logger_result = {}
         urls = []
         res = []
         for story in json_data['news']['storyList']:
@@ -176,6 +176,7 @@ def get_yandex_data(session=None):
                 except Exception as e:
                     print(f"new page {e}")
             k = 0
+            logger_result[url] = len(news)
             for new in news:
                 k += 1
                 try:
@@ -210,6 +211,8 @@ def get_yandex_data(session=None):
                 except Exception as e:
                     print(f"newsE {e}")
         print("save")
+        for k, i in logger_result.items():
+            print(f"{k} -- {i}")
         save_yandex_data(json_data, res)
         # for data in BeautifulSoup(response).find_all("div", {"class": "mg-snippet mg-snippet_flat news-search-story__snippet"}):
         #     try:
