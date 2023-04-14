@@ -216,7 +216,7 @@ def get_yandex_data(session=None):
                 url = story['url'].split("?")[0]
                 if url == k:
                     print(f"{k} -- {i} -- {story['storyDocs']}")
-        save_yandex_data(json_data, res)
+        save_yandex_data(json_data, res, logger_result)
         # for data in BeautifulSoup(response).find_all("div", {"class": "mg-snippet mg-snippet_flat news-search-story__snippet"}):
         #     try:
         #         text = data.find("span", {"class": "mg-snippet__text"}).text
@@ -267,7 +267,7 @@ def send_to_rmq_full_test(rmq_json_data):
         print("can not send RMQ " + str(e))
 
 
-def save_yandex_data(json_data, res):
+def save_yandex_data(json_data, res, logger_result):
     yandex_story = []
     global_models = []
     # now_time = datetime.now(timezone.utc)
@@ -323,7 +323,7 @@ def save_yandex_data(json_data, res):
                 title=story['title'],
                 url=url,
                 lastHourDocs=story['lastHourDocs'],
-                storyDocs=story['storyDocs'],
+                storyDocs=logger_result.get(url, story['storyDocs']),
                 themeStories=story['themeStories'],
                 themeDocs=story['themeDocs'],
                 fullWatches=story['fullWatches'],
@@ -353,7 +353,7 @@ def save_yandex_data(json_data, res):
                 title=story['title'],
                 url=url,
                 lastHourDocs=story['lastHourDocs'],
-                storyDocs=story['storyDocs'],
+                storyDocs=logger_result.get(url, story['storyDocs']),
                 themeStories=story['themeStories'],
                 themeDocs=story['themeDocs'],
                 fullWatches=story['fullWatches'],
