@@ -384,18 +384,18 @@ def save_yandex_data(json_data, res, logger_result):
     # print("=====================RESULT END======================")
     django.db.close_old_connections()
 
-    time.sleep(60 * 10)
-
-    forgot_story = []
-    for k, v in result_group.items():
-        if not checker(k):
-            forgot_story.append(k)
-            add_again(res, k)
-    if len(forgot_story) > 0:
-        time.sleep(60 * 5)
-    for k in forgot_story:
-        if not checker(k):
-            raise Exception("can not find story")
+    # time.sleep(60 * 10)
+    #
+    # forgot_story = []
+    # for k, v in result_group.items():
+    #     if not checker(k):
+    #         forgot_story.append(k)
+    #         add_again(res, k)
+    # if len(forgot_story) > 0:
+    #     time.sleep(60 * 5)
+    # for k in forgot_story:
+    #     if not checker(k):
+    #         raise Exception("can not find story")
     try:
         PostGroupsGlobal.objects.bulk_create(global_models, batch_size=200, ignore_conflicts=True)
         save_group(global_models)
