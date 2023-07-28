@@ -10,7 +10,7 @@ from dateutil.parser import parse
 import django.db
 
 # from core.models import YandexStatistic
-from core.models import YandexStatistic, YandexStatistic0, Post, PostContentGlobal, PostGroupsGlobal
+from core.models import YandexStatistic, YandexStatistic0, Post, ApiKeysModel, PostContentGlobal, PostGroupsGlobal
 
 DATA_URL = "https://dzen.ru/news/top/region/Saint_Petersburg?issue_tld=ru"
 DATA_TEXT = "window.Ya.Neo.dataSource="
@@ -22,8 +22,9 @@ def get_proxy():
     if len(PROXIES) == 0:
         try:
             time.sleep(1)
+            best_proxies_key =ApiKeysModel.objects.get(key="best_proxy").value
             new_proxy = requests.get(
-                "http://api.best-proxies.ru/proxylist.json?key=%s&type=http,https" % KEY,
+                "http://api.best-proxies.ru/proxylist.json?key=%s&type=http,https" % best_proxies_key,
                 timeout=600)
             try:
                 for proxy in json.loads(new_proxy.text):
