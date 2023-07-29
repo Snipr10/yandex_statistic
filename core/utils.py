@@ -318,54 +318,59 @@ def save_yandex_data(json_data, res, logger_result):
             result_group[r['group_id']] = [r.get('h_url')]
     for story in json_data['news']['storyList']:
         url = story['url'].split("?")[0]
-        yandex_story.append(
-            YandexStatistic(
-                yandex_id=str(story['id']),
-                title=story['title'],
-                url=url,
-                lastHourDocs=story['lastHourDocs'],
-                storyDocs=logger_result.get(url, story['storyDocs']),
-                themeStories=story['themeStories'],
-                themeDocs=story['themeDocs'],
-                fullWatches=story['fullWatches'],
-                regionalInterest=story['stat']['regionalInterest'],
-                generalInterest=story['stat']['generalInterest'],
-                weight=story['stat']['weight'],
-                parsing_date=now_time,
-                group_id=hashlib.md5(url.encode()).hexdigest()
+        try:
+            yandex_story.append(
+                YandexStatistic(
+                    yandex_id=str(story['id']),
+                    title=story['title'],
+                    url=url,
+                    lastHourDocs=story['lastHourDocs'],
+                    storyDocs=logger_result.get(url, story['storyDocs']),
+                    themeStories=story['themeStories'],
+                    themeDocs=story['themeDocs'],
+                    fullWatches=story.get('fullWatches') or 0,
+                    regionalInterest=story['stat']['regionalInterest'],
+                    generalInterest=story['stat']['generalInterest'],
+                    weight=story['stat']['weight'],
+                    parsing_date=now_time,
+                    group_id=hashlib.md5(url.encode()).hexdigest()
+                )
             )
-        )
 
-        global_models.append(
-            PostGroupsGlobal(
-                id=hashlib.md5(url.encode()).hexdigest(),
-                name=story['title'],
-                url=url
+            global_models.append(
+                PostGroupsGlobal(
+                    id=hashlib.md5(url.encode()).hexdigest(),
+                    name=story['title'],
+                    url=url
+                )
             )
-        )
+        except Exception as e:
+            print(e)
     yandex_story_o = []
 
     for story in json_data['news']['storyList']:
         url = story['url'].split("?")[0]
+        try:
+            yandex_story_o.append(
+                YandexStatistic0(
+                    yandex_id=str(story['id']),
+                    title=story['title'],
+                    url=url,
+                    lastHourDocs=story['lastHourDocs'],
+                    storyDocs=logger_result.get(url, story['storyDocs']),
+                    themeStories=story['themeStories'],
+                    themeDocs=story['themeDocs'],
+                    fullWatches=story.get('fullWatches') or 0,
+                    regionalInterest=story['stat']['regionalInterest'],
+                    generalInterest=story['stat']['generalInterest'],
+                    weight=story['stat']['weight'],
+                    parsing_date=now_time,
+                    group_id=hashlib.md5(url.encode()).hexdigest()
 
-        yandex_story_o.append(
-            YandexStatistic0(
-                yandex_id=str(story['id']),
-                title=story['title'],
-                url=url,
-                lastHourDocs=story['lastHourDocs'],
-                storyDocs=logger_result.get(url, story['storyDocs']),
-                themeStories=story['themeStories'],
-                themeDocs=story['themeDocs'],
-                fullWatches=story['fullWatches'],
-                regionalInterest=story['stat']['regionalInterest'],
-                generalInterest=story['stat']['generalInterest'],
-                weight=story['stat']['weight'],
-                parsing_date=now_time,
-                group_id=hashlib.md5(url.encode()).hexdigest()
-
+                )
             )
-        )
+        except Exception as e:
+            print(e)
     # #     posts.append(
     # #         Post(
     # #             cache_id=get_sphinx_id_16(r['h_url']),
