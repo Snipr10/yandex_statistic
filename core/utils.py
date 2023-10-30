@@ -153,7 +153,7 @@ def get_yandex_data(session=None):
         res = []
         for story in json_data['news']['storyList']:
             urls.append(story['url'].split("?")[0])
-        for url in urls[:2]:
+        for url in urls:
             i += 1
             url_full = url.replace("/story/", "/instory/")
             url_full = url_full.replace(urls[-1].split("/")[3], "news") + "?issue_tld=ru"
