@@ -16,16 +16,20 @@ DATA_URL = "https://dzen.ru/news/top/region/Saint_Petersburg?issue_tld=ru"
 DATA_TEXT = "window.Ya.Neo.dataSource="
 KEY = "9b3e4b2d01e913c233768debb0f0445c"
 PROXIES = []
-
+requests.get("http://api.best-proxies.ru/proxylist.json?key=fc87ae375072596ff9faaf290907e232&type=http,https")
 
 def get_proxy():
     if len(PROXIES) == 0:
         try:
             time.sleep(1)
             best_proxies_key =ApiKeysModel.objects.get(key="best_proxy").value
+
+            # session.proxies.update(proxies)
             new_proxy = requests.get(
                 "http://api.best-proxies.ru/proxylist.json?key=%s&type=http,https" % best_proxies_key,
-                timeout=600)
+                proxies={'http': f'http://tools-admin_metamap_com:456f634698@212.113.102.124:30001',
+                         'https': f'http://tools-admin_metamap_com:456f634698@212.113.102.124:30001'})
+
             try:
                 for proxy in json.loads(new_proxy.text):
                     host = proxy['ip']
@@ -75,7 +79,7 @@ def generate_proxy_session(proxy_host, proxy_port, proxy_type):
     proxy_str = f"{proxy_host}:{proxy_port}"
     proxies = {'http': f'{proxy_type}://{proxy_str}', 'https': f'{proxy_type}://{proxy_str}'}
 
-    session.proxies.update(proxies)
+    # session.proxies.update(proxies)
     return session
 
 
@@ -150,7 +154,7 @@ def get_yandex_data(session=None):
         res = []
         for story in json_data['news']['storyList']:
             urls.append(story['url'].split("?")[0])
-        for url in urls:
+        for url in urls[:2]:
             i += 1
             url_full = url.replace("/story/", "/instory/")
             url_full = url_full.replace(urls[-1].split("/")[3], "news") + "?issue_tld=ru"
