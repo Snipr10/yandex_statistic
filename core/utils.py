@@ -137,8 +137,11 @@ def get_yandex_data(session=None):
     for content in BeautifulSoup(response).find_all("script"):
         if DATA_TEXT in str(content):
             str_json = str(content.contents[0]).replace(DATA_TEXT, "").strip()[:-1]
-            str_json = str_json[:str_json.rfind(';window.Ya.Neo.dataSource["neo"]')]
-            json_data = json.loads(str_json)
+            try:
+                json_data =  json.loads(str(content.contents[0]).replace(DATA_TEXT, "").strip()[:-1])
+            except Exception:
+                str_json = str_json[:str_json.rfind(';window.Ya.Neo.dataSource["neo"]')]
+                json_data = json.loads(str_json)
             break
     i = 0
     if json_data is not None:
@@ -156,9 +159,12 @@ def get_yandex_data(session=None):
             script_ = None
             for script in BeautifulSoup(response).find_all("script"):
                 if "window.Ya.Neo.dataSource" in str(script):
-                    str_json = script.string[:-1].replace("window.Ya.Neo.dataSource=", "")
-                    str_json = str_json[:str_json.rfind(';window.Ya.Neo.dataSource["neo"]')]
-                    script_ = json.loads(str_json)
+                    try:
+                        str_json = script.string[:-1].replace("window.Ya.Neo.dataSource=", "")
+                        script_ = json.loads(str_json)
+                    except Exception:
+                        str_json = str_json[:str_json.rfind(';window.Ya.Neo.dataSource["neo"]')]
+                        script_ = json.loads(str_json)
                     break
             news = []
             # for new in script_.get('news',{}).get('instoryPage',[]):
