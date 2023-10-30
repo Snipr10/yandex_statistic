@@ -78,7 +78,7 @@ def generate_proxy_session(proxy_host, proxy_port, proxy_type):
     proxy_str = f"{proxy_host}:{proxy_port}"
     proxies = {'http': f'{proxy_type}://{proxy_str}', 'https': f'{proxy_type}://{proxy_str}'}
 
-    # session.proxies.update(proxies)
+    session.proxies.update(proxies)
     return session
 
 
