@@ -16,7 +16,6 @@ DATA_URL = "https://dzen.ru/news/top/region/Saint_Petersburg?issue_tld=ru"
 DATA_TEXT = "window.Ya.Neo.dataSource="
 KEY = "9b3e4b2d01e913c233768debb0f0445c"
 PROXIES = []
-requests.get("http://api.best-proxies.ru/proxylist.json?key=fc87ae375072596ff9faaf290907e232&type=http,https")
 
 def get_proxy():
     if len(PROXIES) == 0:
