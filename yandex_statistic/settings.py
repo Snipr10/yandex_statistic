@@ -88,7 +88,7 @@ DATABASES = {
         'NAME': 'parser',
         'USER': 'parser',
         'PASSWORD': '9ExtUS8uRyF9FSDf',
-        'HOST': '192.168.5.11',
+        'HOST': '192.168.5.27',
         'PORT': '3306',
 
     }
@@ -133,7 +133,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 # CELERY STUFF
-BROKER_URL = 'redis://127.0.0.1:6379/8'
+BROKER_URL = 'redis://127.0.0.1:6380/8'
 # BROKER_URL = 'redis://redis:6379/8'
 
 CELERY_ACCEPT_CONTENT = ['application/json']

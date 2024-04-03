@@ -82,3 +82,12 @@ class PostGroupsGlobal(models.Model):
 
     class Meta:
         db_table = 'prsr_parser_global_groups'
+
+
+class ApiKeysModel(models.Model):
+    id = models.IntegerField(primary_key=True)
+    key = models.CharField(max_length=256)
+    value = models.CharField(max_length=256)
+
+    class Meta:
+        db_table = 'prsr_parser_api_keys'
