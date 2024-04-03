@@ -13,7 +13,7 @@ import django.db
 from core.models import YandexStatistic, YandexStatistic0, Post, PostContentGlobal, PostGroupsGlobal
 
 DATA_URL = "https://dzen.ru/news/top/region/Saint_Petersburg?issue_tld=ru"
-DATA_TEXT = "window.Ya.Neo.dataSource="
+DATA_TEXT = "window.Ya.Neo="
 KEY = "548b8a1d79d61255f79c01b47dd141c5"
 PROXIES = []
 
@@ -136,9 +136,14 @@ def get_yandex_data(session=None):
     json_data = None
     for content in BeautifulSoup(response).find_all("script"):
         if DATA_TEXT in str(content):
-            str_json = str(content.contents[0]).replace(DATA_TEXT, "").strip()[:-1]
-            str_json = str_json[:str_json.rfind(';window.Ya.Neo.dataSource["neo"]')]
-            json_data = json.loads(str_json)
+            str_json = (str(content.contents[0]).replace("window.Ya=window.Ya||{};window.Ya.Neo=window.Ya.Neo||{};window.Ya.Neo=", ""))
+            while len(str_json)> 10:
+                try:
+                    json_data = json.loads(str_json)
+                    json_data = json_data['dataSource']
+                    break
+                except Exception:
+                    str_json = str_json[:-1]
             break
     i = 0
     if json_data is not None:
@@ -151,22 +156,27 @@ def get_yandex_data(session=None):
             i += 1
             print(f"i {i}")
             url_full = url.replace("/story/", "/instory/")
+            url_full = "https://dzen.ru" + url_full
             url_full = url_full.replace(urls[-1].split("/")[3], "news") + "?issue_tld=ru"
             response, session = get_response_news(session, url_full)
 
             script_ = None
             for script in BeautifulSoup(response).find_all("script"):
-                if "window.Ya.Neo.dataSource" in str(script):
-                    str_json = script.string[:-1].replace("window.Ya.Neo.dataSource=", "")
-                    str_json = str_json[:str_json.rfind(';window.Ya.Neo.dataSource["neo"]')]
-                    script_ = json.loads(str_json)
+                if "nextPage" in str(script):
+                    str_json = script.string[:-1].replace("window.Ya=window.Ya||{};window.Ya.Neo=window.Ya.Neo||{};window.Ya.Neo=", "")
+                    script_ = json.loads(str_json+"}")
+                    script_ = script_['dataSource']
+
                     break
             news = []
             # for new in script_.get('news',{}).get('instoryPage',[]):
             next_page = script_['news']['nextPage']
-            for new in script_['news']['instoryPage']:
-                if new.get("docs"):
-                    news.extend(new.get("docs"))
+            try:
+                for new in script_['news']['instoryPage']:
+                    if new.get("docs"):
+                        news.extend(new.get("docs"))
+            except Exception as e:
+                pass
             while next_page is not None:
                 try:
                     response, session = get_response_news(session, "https://dzen.ru" + next_page + "&issue_tld=ru")
@@ -371,6 +381,7 @@ def save_yandex_data(json_data, res):
     # except Exception as e:
     #     print(e)
 
+    print("YandexStatistic")
     YandexStatistic.objects.all().delete()
     YandexStatistic.objects.bulk_create(yandex_story, batch_size=200)
     YandexStatistic0.objects.bulk_create(yandex_story_o, batch_size=200)
