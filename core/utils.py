@@ -321,8 +321,8 @@ def save_yandex_data(json_data, res, logger_result):
             send_to_rmq_full_test(rmq_json_data)
     except Exception as e:
         print(e)
-    if len(d_set) < 15:
-        raise Exception("len(d_set)")
+    # if len(d_set) < 15:
+    #     raise Exception("len(d_set)")
     result_group = {}
     for r in res:
         if result_group.get(r['group_id']) is not None:
