@@ -26,8 +26,9 @@ def get_proxy():
             # session.proxies.update(proxies)
             new_proxy = requests.get(
                 "http://api.best-proxies.ru/proxylist.json?key=%s&type=http,https" % best_proxies_key,
-                proxies={'http': f'http://tools-admin_metamap_com:456f634698@212.113.102.124:30001',
-                         'https': f'http://tools-admin_metamap_com:456f634698@212.113.102.124:30001'})
+                # proxies={'http': f'http://tools-admin_metamap_com:456f634698@212.113.102.124:30001',
+                #          'https': f'http://tools-admin_metamap_com:456f634698@212.113.102.124:30001'}
+            )
 
             try:
                 for proxy in json.loads(new_proxy.text):
