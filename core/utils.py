@@ -66,9 +66,8 @@ def get_proxy():
 
 def check_yandex_url(session):
     try:
-        response = session.get('https://newssearch.yandex.ru/news', timeout=5)
-        if response.ok:
-            return True
+        response = session.get("https://dzen.ru/api/v4/news/stats/bulk", timeout=5)
+        return True
     except Exception as e:
         pass
     return False
@@ -159,7 +158,7 @@ def get_yandex_data(session=None):
         for url in urls:
             i += 1
             url_full = url.replace("/story/", "/instory/")
-            url_full = "https://dzen.ru" + url_full
+            # url_full = "https://dzen.ru" + url_full
             url_full = url_full.replace(urls[-1].split("/")[3], "news") + "?issue_tld=ru"
             response, session = get_response_news(session, url_full)
 
