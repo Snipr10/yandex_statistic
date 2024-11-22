@@ -172,7 +172,10 @@ def get_yandex_data(session=None):
                     break
             news = []
             # for new in script_.get('news',{}).get('instoryPage',[]):
-            next_page = script_['news']['nextPage']
+            try:
+                next_page = script_['news']['nextPage']
+            except Exception:
+                next_page = None
             try:
                 for new in script_['news']['instoryPage']:
                     if new.get("docs"):
