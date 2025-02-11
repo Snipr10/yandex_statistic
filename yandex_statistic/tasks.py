@@ -9,13 +9,13 @@ logger = logging.getLogger(__file__)
 @app.task
 def start_task_new_update():
     print("start")
-    get_yandex_data(1)
+    get_yandex_data(source=1)
 
 
 @app.task
 def start_task_new_update2():
     print("start")
-    get_yandex_data(2)
+    get_yandex_data(source=2)
 
 
 @app.task
