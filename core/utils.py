@@ -10,9 +10,12 @@ from dateutil.parser import parse
 import django.db
 
 # from core.models import YandexStatistic
-from core.models import YandexStatistic, YandexStatistic0, Post, ApiKeysModel, PostContentGlobal, PostGroupsGlobal
+from core.models import YandexStatistic, YandexStatistic0, Post, ApiKeysModel, PostContentGlobal, PostGroupsGlobal, \
+    MyEnum
 
 DATA_URL = "https://dzen.ru/news/top/region/Saint_Petersburg?issue_tld=ru"
+DATA_URL2 = "https://dzen.ru/news/top/region/saint-petersburg_and_leningrad_oblast?issue_tld=ru"
+
 DATA_TEXT = "window.Ya.Neo="
 KEY = "9b3e4b2d01e913c233768debb0f0445c"
 PROXIES = []
@@ -82,14 +85,14 @@ def generate_proxy_session(proxy_host, proxy_port, proxy_type):
     return session
 
 
-def get_response(new_session):
+def get_response(new_session, url =DATA_URL):
     try:
-        new_response = new_session.get(DATA_URL).text
+        new_response = new_session.get(url).text
     except Exception:
         return get_response(get_proxy())
     if "captcha" in new_response:
         new_session = get_proxy()
-        return get_response(new_session)
+        return get_response(new_session, url)
     return new_response, new_session
 
 
@@ -132,10 +135,11 @@ def get_response_news(new_session, url):
     return new_response, new_session
 
 
-def get_yandex_data(session=None):
+def get_yandex_data(session=None, source=1):
     if session is None:
         session = get_proxy()
-    response, session = get_response(session)
+    url = DATA_URL if source else DATA_URL2
+    response, session = get_response(session, url)
     json_data = None
     for content in BeautifulSoup(response).find_all("script"):
         if DATA_TEXT in str(content):
@@ -233,7 +237,7 @@ def get_yandex_data(session=None):
                 url = story['url'].split("?")[0]
                 if url == k:
                     print(f"{k} -- {i} -- {story['storyDocs']}")
-        save_yandex_data(json_data, res, logger_result)
+        save_yandex_data(json_data, res, logger_result, source)
         # for data in BeautifulSoup(response).find_all("div", {"class": "mg-snippet mg-snippet_flat news-search-story__snippet"}):
         #     try:
         #         text = data.find("span", {"class": "mg-snippet__text"}).text
@@ -284,7 +288,9 @@ def send_to_rmq_full_test(rmq_json_data):
         print("can not send RMQ " + str(e))
 
 
-def save_yandex_data(json_data, res, logger_result):
+def save_yandex_data(json_data, res, logger_result, source=1):
+    source_enum = MyEnum.VALUE1 if source == 1 else MyEnum.VALUE2
+
     yandex_story = []
     global_models = []
     # now_time = datetime.now(timezone.utc)
@@ -349,7 +355,8 @@ def save_yandex_data(json_data, res, logger_result):
                     generalInterest=story['stat']['generalInterest'],
                     weight=story['stat']['weight'],
                     parsing_date=now_time,
-                    group_id=hashlib.md5(url.encode()).hexdigest()
+                    group_id=hashlib.md5(url.encode()).hexdigest(),
+                    source=source_enum
                 )
             )
 
@@ -381,9 +388,10 @@ def save_yandex_data(json_data, res, logger_result):
                     generalInterest=story['stat']['generalInterest'],
                     weight=story['stat']['weight'],
                     parsing_date=now_time,
-                    group_id=hashlib.md5(url.encode()).hexdigest()
+                    group_id=hashlib.md5(url.encode()).hexdigest(),
+                    source=source_enum
 
-                )
+            )
             )
         except Exception as e:
             print(e)
@@ -433,7 +441,7 @@ def save_yandex_data(json_data, res, logger_result):
     #     print(e)
 
     print("YandexStatistic")
-    YandexStatistic.objects.all().delete()
+    YandexStatistic.objects.filter(source=source_enum).delete()
     try:
         YandexStatistic.objects.bulk_create(yandex_story, batch_size=200, ignore_conflicts=True)
     except Exception:

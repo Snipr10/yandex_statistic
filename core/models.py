@@ -3,6 +3,17 @@ import datetime
 from django.db import models
 
 
+class MyEnum(models.TextChoices):
+    VALUE1 = '1', '1'
+    VALUE2 = '2', '2'
+
+
+# Добавьте поле ENUM в вашу модель
+status = models.CharField(
+    max_length=10,
+    choices=MyEnum.choices,
+    default=MyEnum.VALUE1,
+)
 class YandexStatistic(models.Model):
     # id = models.CharField(primary_key=True, max_length=256)
     title = models.CharField(max_length=256)
@@ -18,6 +29,11 @@ class YandexStatistic(models.Model):
     parsing_date = models.DateTimeField()
     yandex_id = models.CharField(max_length=256)
     group_id = models.CharField(max_length=256)
+    source = models.CharField(
+        max_length=10,
+        choices=MyEnum.choices,
+        default=MyEnum.VALUE1,
+    )
 
     class Meta:
         db_table = 'prsr_parser_yandex_static'
@@ -38,7 +54,11 @@ class YandexStatistic0(models.Model):
     parsing_date = models.DateTimeField()
     yandex_id = models.CharField(max_length=256)
     group_id = models.CharField(max_length=256)
-
+    source = models.CharField(
+        max_length=10,
+        choices=MyEnum.choices,
+        default=MyEnum.VALUE1,
+    )
     class Meta:
         db_table = 'prsr_parser_yandex_static_0'
 
