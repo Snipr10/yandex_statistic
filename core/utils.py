@@ -138,7 +138,7 @@ def get_response_news(new_session, url):
 def get_yandex_data(session=None, source=1):
     if session is None:
         session = get_proxy()
-    url = DATA_URL if source else DATA_URL2
+    url = DATA_URL if source == 1 else DATA_URL2
     response, session = get_response(session, url)
     json_data = None
     for content in BeautifulSoup(response).find_all("script"):
