@@ -89,7 +89,7 @@ def get_response(new_session, url =DATA_URL):
     try:
         new_response = new_session.get(url).text
     except Exception:
-        return get_response(get_proxy())
+        return get_response(get_proxy(), url)
     if "captcha" in new_response:
         new_session = get_proxy()
         return get_response(new_session, url)
