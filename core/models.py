@@ -4,8 +4,8 @@ from django.db import models
 
 
 class MyEnum(models.TextChoices):
-    VALUE1 = '1', '1'
-    VALUE2 = '2', '2'
+    VALUE1 = 'Saint_Petersburg', 'Saint_Petersburg'
+    VALUE2 = 'saint-petersburg_and_leningrad_oblast', 'saint-petersburg_and_leningrad_oblast'
 
 
 # Добавьте поле ENUM в вашу модель
